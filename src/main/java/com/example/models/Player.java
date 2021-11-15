@@ -1,5 +1,7 @@
 package com.example.models;
 
+import com.example.models.strategy.Strategy;
+
 import java.util.Stack;
 
 public class Player {
