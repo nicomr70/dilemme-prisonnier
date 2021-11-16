@@ -2,18 +2,8 @@ package com.example;
 
 import com.example.models.Game;
 import com.example.models.Player;
-import com.example.models.strategy.StrategyType;
-import jdk.jfr.internal.consumer.StringParser;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.example.RestServer.games;
 
