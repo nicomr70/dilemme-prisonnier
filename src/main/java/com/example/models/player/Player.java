@@ -13,8 +13,8 @@ public class Player {
     static int counter_player;
     private final int id;
     private IStrategy strategy;
-    private byte currentChoice = -1;
-    private Stack<Byte> choicesHistory;
+    private PlayerChoice currentChoice = PlayerChoice.NONE;
+    private Stack<PlayerChoice> choicesHistory;
     private final PlayerScore score;
 
     public boolean canPlay;
@@ -34,9 +34,9 @@ public class Player {
         choicesHistory = new Stack<>();
     }
 
-    public byte strategyPlay(int turnCount, Player otherPlayer) throws Exception {
+    public PlayerChoice strategyPlay(int turnCount, Player otherPlayer) throws Exception {
         if (strategy != null) {
-            byte choice = strategy.execute(turnCount, this, otherPlayer);
+            PlayerChoice choice = strategy.execute(turnCount, this, otherPlayer);
             currentChoice = choice;
             canPlay = false;
             return choice;
@@ -45,7 +45,7 @@ public class Player {
         }
     }
 
-    public void manualPlay(byte choice) {
+    public void manualPlay(PlayerChoice choice) {
         currentChoice = choice;
         canPlay = false;
     }
@@ -54,13 +54,13 @@ public class Player {
         this.strategy = strategy;
     }
 
-    public byte getLastChoice() {
+    public PlayerChoice getLastChoice() {
         try {
             return choicesHistory.peek();
         } catch (EmptyStackException e){
             e.printStackTrace();
         }
-        return -1;
+        return PlayerChoice.NONE;
     }
 
     public void updateChoicesHistory() {

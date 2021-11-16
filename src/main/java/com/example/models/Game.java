@@ -1,6 +1,7 @@
 package com.example.models;
 
 import com.example.models.player.Player;
+import com.example.models.player.PlayerChoice;
 import com.example.models.player.PlayerMove;
 import com.example.models.player.PlayerScore;
 
@@ -25,12 +26,12 @@ public class Game {
     private int turnCount = 0;
     private int maxTurnCount;
 
-    public Game(Player player1, Player player2,int maxTurnCount) {
+    public Game(Player player1, Player player2, int maxTurnCount) {
         id = ++gameCounter;
         this.player1 = player1;
         this.player2 = player2;
         moveHistory = new ArrayList<>();
-        this.maxTurnCount=maxTurnCount;
+        this.maxTurnCount = maxTurnCount;
 
     }
 
@@ -38,46 +39,48 @@ public class Game {
         return id;
     }
 
-    public byte AITakeTurn(Player AIPlayer) throws Exception {
+    public PlayerChoice AITakeTurn(Player AIPlayer) throws Exception {
         Player otherPlayer = AIPlayer == player1 ? player2 : player1;
-        byte choice = AIPlayer.strategyPlay(turnCount, otherPlayer);
+        PlayerChoice choice = AIPlayer.strategyPlay(turnCount, otherPlayer);
         PlayerMove move = new PlayerMove(player1, choice, turnCount);
         moveHistory.add(move);
-        System.out.println(AIPlayer.name + " a " + (choice == 1 ? "coopéré" : "trahi") + "."); // To be removed in final version
+        System.out.println(AIPlayer.name + " a " + (choice == PlayerChoice.COOPERATE ? "coopéré" : "trahi") + "."); // To be removed in final version
         AIPlayer.canPlay = false;
         return choice;
     }
 
     // TODO : synchronized car deux joueur ne peuvent pas jouer en même temsp , et pas mis dans httpRequest car deja une variable de condition
-    public synchronized byte humanTakeTurn(Player humanPlayer, byte choice) {
+    public synchronized PlayerChoice humanTakeTurn(Player humanPlayer, PlayerChoice choice) {
         humanPlayer.manualPlay(choice);
         PlayerMove move = new PlayerMove(player1, choice, turnCount);
         moveHistory.add(move);
-        System.out.println(humanPlayer.name + " a " + (choice == 1 ? "coopéré" : "trahi") + "."); // To be removed in final version
+        System.out.println(humanPlayer.name + " a " + (choice == PlayerChoice.COOPERATE ? "coopéré" : "trahi") + "."); // To be removed in final version
         humanPlayer.canPlay = false;
         return choice;
     }
 
     private void calculateTurnScore() {
-        byte player1Choice = player1.getCurrentChoice();
-        byte player2Choice = player2.getCurrentChoice();
+        PlayerChoice player1Choice = player1.getCurrentChoice();
+        PlayerChoice player2Choice = player2.getCurrentChoice();
 
-        switch (player1Choice + player2Choice) {
-            case 0:
-                PlayerScore.applyBothDefected(player1, player2);
-                break;
-            case 1:
-                if (player1Choice == 0) {
-                    PlayerScore.applyOneDefectedOther(player1, player2);
-                } else {
-                    PlayerScore.applyOneDefectedOther(player2, player1);
-                }
-                break;
-            case 2:
-                PlayerScore.applyCooperated(player1, player2);
-                break;
-            default:
-                break;
+        if (player1Choice != PlayerChoice.NONE && player2Choice != PlayerChoice.NONE) {
+            switch (player1Choice.ordinal() + player2Choice.ordinal()) {
+                case 0:
+                    PlayerScore.applyBothDefected(player1, player2);
+                    break;
+                case 1:
+                    if (player1Choice == PlayerChoice.DEFECT) {
+                        PlayerScore.applyOneDefectedOther(player1, player2);
+                    } else {
+                        PlayerScore.applyOneDefectedOther(player2, player1);
+                    }
+                    break;
+                case 2:
+                    PlayerScore.applyCooperated(player1, player2);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -100,11 +103,11 @@ public class Game {
         endTurn();
     }
 
-    public void launch(int turnCount) {
-        if (turnCount > 0) {
+    public void launch() {
+        if (maxTurnCount > 0) {
             try {
-                for (int i = 0; i < turnCount; i++) {
-                    System.out.println("<<< Tour " + (i+1) + " >>>");
+                while (turnCount < maxTurnCount) {
+                    System.out.println("<<< Tour " + (turnCount + 1) + " >>>");
                     turn();
                 }
             } catch (Exception e) {
@@ -112,10 +115,6 @@ public class Game {
             }
         }
         System.out.println("SCORES :\n" + player1.name + " : " + player1.getScore() + " ; " + player2.name + " : " + player2.getScore());
-    }
-
-    public void launch() {
-        launch(10);
     }
 
     public JSONObject renvoiejeu(){
@@ -130,25 +129,18 @@ public class Game {
     }
 
     public void setPlayer(Player player){
-        if(player1==null){
-            player1=player;
-        }else{
-            player2=player;
-        }
+        if (player1 == null) { player1 = player; }
+        else { player2 = player; }
     }
 
-    public boolean areAllPlayersHere(){
-        return player1!=null && player2!=null;
+    public boolean areAllPlayersHere() {
+        return player1 != null && player2 != null;
     }
 
     public Player getPlayerWithId(int id) {
-        if(player1.getId()==id){
-            return player1;
-        }else if(player2.getId()==id){
-            return player2;
-        }else{
-            return null;
-        }
+        if (player1.getId() == id) { return player1; }
+        if (player2.getId()==id) { return player2; }
+        return null;
     }
 
 

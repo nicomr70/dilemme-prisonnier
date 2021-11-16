@@ -1,21 +1,22 @@
 package com.example.models.strategy;
 
 import com.example.models.player.Player;
+import com.example.models.player.PlayerChoice;
 
 /** Stratégie Rancunier */
 final class GrudgerStrategy implements IStrategy {
     private boolean allowDefect;
 
     @Override
-    public byte execute(int turnCount, Player player, Player otherPlayer) {
+    public PlayerChoice execute(int turnCount, Player player, Player otherPlayer) {
         if (allowDefect) {
-            return 0;
+            return PlayerChoice.DEFECT;
         } else {
-            if (turnCount != 1 && otherPlayer.getLastChoice() == 0) {
+            if (turnCount != 1 && otherPlayer.getLastChoice() == PlayerChoice.DEFECT) {
                 allowDefect = true;
-                return 0;
+                return PlayerChoice.DEFECT;
             }
-            return 1;
+            return PlayerChoice.COOPERATE;
         }
     }
 }

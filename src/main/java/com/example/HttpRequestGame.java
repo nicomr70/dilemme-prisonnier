@@ -2,6 +2,7 @@ package com.example;
 
 import com.example.models.Game;
 import com.example.models.player.Player;
+import com.example.models.player.PlayerChoice;
 import com.example.models.strategy.StrategyType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,10 +22,10 @@ public class HttpRequestGame {
     }
 
     @PostMapping("/play?gamer={id}&id={id}&move={jeu}")
-    synchronized ResponseEntity<Game> playMove(@PathVariable(name = "id")int id, @PathVariable(name = "gamer")int gamer, @PathVariable(name = "move") byte move){
+    synchronized ResponseEntity<Game> playMove(@PathVariable(name = "id")int id, @PathVariable(name = "gamer")int gamer, @PathVariable(name = "move") PlayerChoice move){
         //TODO savoir sur quel partie on joue
         Game g = RestServer.games.get(id);
-        g.humanTakeTurn(g.getPlayerWithId(gamer),move);
+        g.humanTakeTurn(g.getPlayerWithId(gamer), move);
         if(g.canEndTurn())notifyAll();
         return ResponseEntity.ok(g);
     }
