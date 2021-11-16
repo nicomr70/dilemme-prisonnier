@@ -1,10 +1,17 @@
 package com.example.models;
 
 import com.example.models.strategy.Strategy;
+import lombok.AccessLevel;
+import lombok.Getter;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 
+@Getter
 public class Player {
+    @Getter(AccessLevel.NONE)
+    static int counter_player;
+    private int id;
     private Strategy strategy;
     private byte currentChoice = -1;
     private Stack<Byte> choicesHistory;
@@ -15,6 +22,7 @@ public class Player {
 
 
     public Player(String name) {
+        this.id=++counter_player;
         this.name = name;
         score = new PlayerScore();
         canPlay = true;
@@ -47,11 +55,11 @@ public class Player {
     }
 
     public byte getLastChoice() {
-        return choicesHistory.peek();
-    }
-
-    public byte getCurrentChoice() {
-        return currentChoice;
+        byte b=-1;
+        try {
+            b = choicesHistory.peek();
+        }catch (EmptyStackException e){}
+        return b;
     }
 
     public void updateChoicesHistory() {
@@ -68,5 +76,9 @@ public class Player {
 
     public void updateScore(int earnedPoints) {
         score.addToValue(earnedPoints);
+    }
+
+    public int getId() {
+        return id;
     }
 }
