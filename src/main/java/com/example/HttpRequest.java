@@ -13,9 +13,6 @@ import static com.example.RestServer.games;
 @RequestMapping("/")
 public class HttpRequest {
 
-
-
-
     //ici pour recup toutes les parties creer et non rempli
     @GetMapping("allGames")//ok
     public ResponseEntity<Object[]> allGames(){
