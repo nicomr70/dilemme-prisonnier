@@ -1,6 +1,6 @@
 package com.example.models.strategy;
 
-import com.example.models.Player;
+import com.example.models.player.Player;
 
 /** Stratégie Rancunier */
 final class GrudgerStrategy implements IStrategy {

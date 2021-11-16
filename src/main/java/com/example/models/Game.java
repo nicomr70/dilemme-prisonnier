@@ -1,6 +1,8 @@
 package com.example.models;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.example.models.player.Player;
+import com.example.models.player.PlayerMove;
+import com.example.models.player.PlayerScore;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,7 +11,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 
 //TODO faire une fonction qui renvoie un json en string et qui represente le jeu au complet, utiliser JSONObject
 @Getter
@@ -19,7 +20,7 @@ public class Game {
     private int id;
     private Player player1;
     private Player player2;
-    private List<Move> moveHistory;
+    private List<PlayerMove> moveHistory;
     @Getter(AccessLevel.NONE)
     private int turnCount = 0;
     private int maxTurnCount;
@@ -40,7 +41,7 @@ public class Game {
     public byte AITakeTurn(Player AIPlayer) throws Exception {
         Player otherPlayer = AIPlayer == player1 ? player2 : player1;
         byte choice = AIPlayer.strategyPlay(turnCount, otherPlayer);
-        Move move = new Move(player1, choice, turnCount);
+        PlayerMove move = new PlayerMove(player1, choice, turnCount);
         moveHistory.add(move);
         System.out.println(AIPlayer.name + " a " + (choice == 1 ? "coopéré" : "trahi") + "."); // To be removed in final version
         AIPlayer.canPlay = false;
@@ -50,7 +51,7 @@ public class Game {
     // TODO : synchronized car deux joueur ne peuvent pas jouer en même temsp , et pas mis dans httpRequest car deja une variable de condition
     public synchronized byte humanTakeTurn(Player humanPlayer, byte choice) {
         humanPlayer.manualPlay(choice);
-        Move move = new Move(player1, choice, turnCount);
+        PlayerMove move = new PlayerMove(player1, choice, turnCount);
         moveHistory.add(move);
         System.out.println(humanPlayer.name + " a " + (choice == 1 ? "coopéré" : "trahi") + "."); // To be removed in final version
         humanPlayer.canPlay = false;

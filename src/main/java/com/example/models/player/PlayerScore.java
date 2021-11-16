@@ -1,4 +1,4 @@
-package com.example.models;
+package com.example.models.player;
 
 public class PlayerScore {
     private int currentValue;

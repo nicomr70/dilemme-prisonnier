@@ -1,4 +1,4 @@
-package com.example.models;
+package com.example.models.player;
 
 import com.example.models.strategy.IStrategy;
 import lombok.AccessLevel;
@@ -11,7 +11,7 @@ import java.util.Stack;
 public class Player {
     @Getter(AccessLevel.NONE)
     static int counter_player;
-    private int id;
+    private final int id;
     private IStrategy strategy;
     private byte currentChoice = -1;
     private Stack<Byte> choicesHistory;
@@ -55,11 +55,12 @@ public class Player {
     }
 
     public byte getLastChoice() {
-        byte b=-1;
         try {
-            b = choicesHistory.peek();
-        }catch (EmptyStackException e){}
-        return b;
+            return choicesHistory.peek();
+        } catch (EmptyStackException e){
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     public void updateChoicesHistory() {

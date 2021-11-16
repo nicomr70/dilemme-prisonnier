@@ -1,7 +1,6 @@
 package com.example;
 
-import com.example.models.Game;
-import com.example.models.Player;
+import com.example.models.player.Player;
 import com.example.models.strategy.StrategyFactory;
 import com.example.models.strategy.StrategyType;
 

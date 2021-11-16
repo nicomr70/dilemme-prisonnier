@@ -1,7 +1,7 @@
 package com.example;
 
 import com.example.models.Game;
-import com.example.models.Player;
+import com.example.models.player.Player;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
