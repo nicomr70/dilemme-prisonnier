@@ -21,32 +21,32 @@ public class HttpRequest {
 
     //ici permet de creer une partie
     @PostMapping("createGame/maxTurnCount={maxTurnCount}")
-    public String gameFactory(@PathVariable(name = "maxTurnCount") int maxTurnCount){//ok
+    public ResponseEntity<Game> gameFactory(@PathVariable(name = "maxTurnCount") int maxTurnCount){//ok
         Game g = new Game(null, null, maxTurnCount);
         games.put(g.getId(),g);
-        return g.renvoiejeu().toString();
+        return ResponseEntity.ok(g);
     }
 
     @PostMapping("joinGame/gameId={gameId}&playerName={playerName}")
-    synchronized public String joinGame(@PathVariable("gameId")int gameId, @PathVariable("playerName")String playerName) {
+    synchronized public ResponseEntity<Game> joinGame(@PathVariable("gameId")int gameId, @PathVariable("playerName")String playerName) {
         Player p = new Player(playerName, null);
         Game currentGame = games.get(gameId);
         currentGame.setPlayer(p);
         if (currentGame.areAllPlayersHere())notifyAll();
-        return currentGame.renvoiejeu().toString();
+        return ResponseEntity.ok(currentGame);
     }
 
 
     @GetMapping("waitLastPlayer/id={id}")
-    synchronized public String waitLastPlayer(@PathVariable(name = "id")int id) throws InterruptedException {
+    synchronized public ResponseEntity<Game> waitLastPlayer(@PathVariable(name = "id")int id) throws InterruptedException {
         Game g = games.get(id);
         while(!(g.areAllPlayersHere()))wait();
-        return g.renvoiejeu().toString();
+        return ResponseEntity.ok(g);
     }
 
     @GetMapping("gameInitialState/id={id}")
-    public String gameInitialState(@PathVariable(name = "id")int id){
-        return games.get(id).renvoiejeu().toString();
+    public ResponseEntity<Game> gameInitialState(@PathVariable(name = "id")int id){
+        return ResponseEntity.ok(games.get(id));
     }
 
 }
