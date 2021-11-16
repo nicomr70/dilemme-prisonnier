@@ -8,7 +8,6 @@ import com.example.models.player.PlayerScore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,17 +116,6 @@ public class Game {
         System.out.println("SCORES :\n" + player1.name + " : " + player1.getScore() + " ; " + player2.name + " : " + player2.getScore());
     }
 
-    public JSONObject renvoiejeu(){
-        JSONObject js = new JSONObject();
-        js.put("id",this.id);
-        /*js.put("player1",player1.getScore());
-        /*js.put("player2",player2.getScore());
-        /*s.add("'id' :" +this.id);
-        s.add("'player1' :"+this.player1.getScore());
-        s.add("'player2' :"+this.player2.getScore());*/
-        return js;
-    }
-
     public void setPlayer(Player player){
         if (player1 == null) { player1 = player; }
         else { player2 = player; }
@@ -142,6 +130,5 @@ public class Game {
         if (player2.getId()==id) { return player2; }
         return null;
     }
-
 
 }

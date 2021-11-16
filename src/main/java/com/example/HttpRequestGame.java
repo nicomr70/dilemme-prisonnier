@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/jeu")
+@RequestMapping("/game")
 public class HttpRequestGame {
 
     @GetMapping("/waitPlayerPlay/id={id}")
@@ -21,11 +21,11 @@ public class HttpRequestGame {
         return ResponseEntity.ok(g);
     }
 
-    @PostMapping("/play?gamer={id}&id={id}&move={jeu}")
-    synchronized ResponseEntity<Game> playMove(@PathVariable(name = "id")int id, @PathVariable(name = "gamer")int gamer, @PathVariable(name = "move") PlayerChoice move){
+    @PostMapping("/play/id={id}/playerId={playerId}/move={move}")
+    synchronized ResponseEntity<Game> playMove(@PathVariable(name = "id")int id, @PathVariable(name = "playerId")int playerId, @PathVariable(name = "move") PlayerChoice move){
         //TODO savoir sur quel partie on joue
         Game g = RestServer.games.get(id);
-        g.humanTakeTurn(g.getPlayerWithId(gamer), move);
+        g.humanTakeTurn(g.getPlayerWithId(playerId), move);
         if(g.canEndTurn())notifyAll();
         return ResponseEntity.ok(g);
     }
@@ -33,5 +33,10 @@ public class HttpRequestGame {
     @GetMapping("/allStrategy")
     public ResponseEntity<Object[]> allStrat(){
         return ResponseEntity.ok(Arrays.stream(StrategyType.values()).map((value)->value.getName()).toArray());
+    }
+
+    @GetMapping("/allMove")
+    public ResponseEntity<PlayerChoice[]> allMove(){
+        return ResponseEntity.ok(PlayerChoice.values());
     }
 }

@@ -26,8 +26,8 @@ public class HttpRequest {
         games.put(g.getId(),g);
         return ResponseEntity.ok(g);
     }
-
-    @PostMapping("joinGame/gameId={gameId}&playerName={playerName}")
+    //ok
+    @PostMapping("joinGame/gameId={gameId}/playerName={playerName}")
     synchronized public ResponseEntity<Game> joinGame(@PathVariable("gameId")int gameId, @PathVariable("playerName")String playerName) {
         Player p = new Player(playerName, null);
         Game currentGame = games.get(gameId);
@@ -36,14 +36,14 @@ public class HttpRequest {
         return ResponseEntity.ok(currentGame);
     }
 
-
+    //ok
     @GetMapping("waitLastPlayer/id={id}")
     synchronized public ResponseEntity<Game> waitLastPlayer(@PathVariable(name = "id")int id) throws InterruptedException {
         Game g = games.get(id);
         while(!(g.areAllPlayersHere()))wait();
         return ResponseEntity.ok(g);
     }
-
+    //ok
     @GetMapping("gameInitialState/id={id}")
     public ResponseEntity<Game> gameInitialState(@PathVariable(name = "id")int id){
         return ResponseEntity.ok(games.get(id));
