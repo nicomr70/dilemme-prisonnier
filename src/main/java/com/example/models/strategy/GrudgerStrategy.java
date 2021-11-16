@@ -3,7 +3,7 @@ package com.example.models.strategy;
 import com.example.models.Player;
 
 /** Stratégie Rancunier */
-final class GrudgerStrategy implements Strategy {
+final class GrudgerStrategy implements IStrategy {
     private boolean allowDefect;
 
     @Override

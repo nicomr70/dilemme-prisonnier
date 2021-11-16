@@ -3,7 +3,7 @@ package com.example.models.strategy;
 import com.example.models.Player;
 
 /** Stratégie Pavlov */
-final class PavlovStrategy implements Strategy {
+final class PavlovStrategy implements IStrategy {
     @Override
     public byte execute(int turnCount, Player player, Player otherPlayer) {
         if (turnCount == 1) {

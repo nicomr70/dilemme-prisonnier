@@ -5,7 +5,7 @@ import com.example.models.Player;
 import java.util.Random;
 
 /** Stratégie Aléatoire */
-final class RandomStrategy implements Strategy {
+final class RandomStrategy implements IStrategy {
     private final Random rand = new Random();
 
     @Override

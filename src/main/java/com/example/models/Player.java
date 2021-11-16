@@ -1,6 +1,6 @@
 package com.example.models;
 
-import com.example.models.strategy.Strategy;
+import com.example.models.strategy.IStrategy;
 import lombok.AccessLevel;
 import lombok.Getter;
 
@@ -12,7 +12,7 @@ public class Player {
     @Getter(AccessLevel.NONE)
     static int counter_player;
     private int id;
-    private Strategy strategy;
+    private IStrategy strategy;
     private byte currentChoice = -1;
     private Stack<Byte> choicesHistory;
     private final PlayerScore score;
@@ -28,7 +28,7 @@ public class Player {
         canPlay = true;
     }
 
-    public Player(String name, Strategy strategy) {
+    public Player(String name, IStrategy strategy) {
         this(name);
         this.strategy = strategy;
         choicesHistory = new Stack<>();
@@ -50,7 +50,7 @@ public class Player {
         canPlay = false;
     }
 
-    public void setStrategy(Strategy strategy) {
+    public void setStrategy(IStrategy strategy) {
         this.strategy = strategy;
     }
 
