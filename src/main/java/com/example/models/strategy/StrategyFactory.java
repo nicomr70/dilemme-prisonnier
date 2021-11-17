@@ -1,28 +1,6 @@
 package com.example.models.strategy;
 
 public class StrategyFactory {
-    public static IStrategy getCooperateStrategy() {
-        return new CooperateStrategy();
-    }
-
-    public static IStrategy getDefectStrategy() {
-        return new DefectStrategy();
-    }
-
-    public static IStrategy getRandomStrategy() {
-        return new RandomStrategy();
-    }
-
-    public static IStrategy getTitForTatStrategy() {
-        return new TitForTatStrategy();
-    }
-
-    public static IStrategy getGrudgerStrategy() { return new GrudgerStrategy(); }
-
-    public static IStrategy getPavlovStrategy() {
-        return new PavlovStrategy();
-    }
-
     public static IStrategy getStrategyFromType(StrategyType strategyType) {
         switch (strategyType) {
             case COOPERATE:
@@ -31,6 +9,8 @@ public class StrategyFactory {
                 return new DefectStrategy();
             case TIT_FOR_TAT:
                 return new TitForTatStrategy();
+            case SUSPICIOUS_TIT_FOR_TAT:
+                return new SuspiciousTitForTatStrategy();
             case GRUDGER:
                 return new GrudgerStrategy();
             case PAVLOV:

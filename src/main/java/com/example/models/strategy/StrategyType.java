@@ -5,6 +5,7 @@ public enum StrategyType {
     DEFECT("Toujours trahir"),
     RANDOM("Aléatoire"),
     TIT_FOR_TAT("Donnant-donnant"),
+    SUSPICIOUS_TIT_FOR_TAT("Donnant-donnant soupçonneux"),
     GRUDGER("Rancunier"),
     PAVLOV("Pavlov");
 
