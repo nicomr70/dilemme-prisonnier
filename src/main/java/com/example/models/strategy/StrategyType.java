@@ -6,7 +6,7 @@ public enum StrategyType {
     RANDOM("Aléatoire"),
     TIT_FOR_TAT("Donnant-donnant"),
     SUSPICIOUS_TIT_FOR_TAT("Donnant-donnant soupçonneux"),
-    GRUDGER("Rancunier"),
+    GRIM_TRIGGER("Rancunier"),
     PAVLOV("Pavlov");
 
     private String name;

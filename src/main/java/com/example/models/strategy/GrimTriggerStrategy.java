@@ -4,7 +4,7 @@ import com.example.models.player.Player;
 import com.example.models.player.PlayerChoice;
 
 /** Stratégie Rancunier */
-final class GrudgerStrategy implements IStrategy {
+final class GrimTriggerStrategy implements IStrategy {
     private boolean allowDefect;
 
     @Override

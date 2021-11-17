@@ -11,8 +11,8 @@ public class StrategyFactory {
                 return new TitForTatStrategy();
             case SUSPICIOUS_TIT_FOR_TAT:
                 return new SuspiciousTitForTatStrategy();
-            case GRUDGER:
-                return new GrudgerStrategy();
+            case GRIM_TRIGGER:
+                return new GrimTriggerStrategy();
             case PAVLOV:
                 return new PavlovStrategy();
             case RANDOM:
