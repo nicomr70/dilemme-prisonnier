@@ -11,11 +11,10 @@ final class PavlovStrategy implements IStrategy {
             return PlayerChoice.COOPERATE;
         }
         int scoreDiff = player.getScore() - player.getPreviousScore();
-        PlayerChoice playerLastChoice = player.getLastChoice();
         if (scoreDiff == 5 || scoreDiff == 3) {
-            return playerLastChoice;
+            return player.getLastChoice();
         } else {
-            return  playerLastChoice == PlayerChoice.DEFECT ? PlayerChoice.COOPERATE : PlayerChoice.DEFECT;
+            return  player.hasDefectedLastTurn() ? PlayerChoice.COOPERATE : PlayerChoice.DEFECT;
         }
     }
 }

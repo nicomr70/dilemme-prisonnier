@@ -12,7 +12,7 @@ final class GrimTriggerStrategy implements IStrategy {
         if (allowDefect) {
             return PlayerChoice.DEFECT;
         } else {
-            if (turnCount != 1 && otherPlayer.getLastChoice() == PlayerChoice.DEFECT) {
+            if (turnCount != 1 && otherPlayer.hasDefectedLastTurn()) {
                 allowDefect = true;
                 return PlayerChoice.DEFECT;
             }
