@@ -13,4 +13,16 @@ public enum PlayerChoice {
         }
         return this == COOPERATE ? DEFECT : COOPERATE;
     }
+
+    public final boolean isDefect() {
+        return this == DEFECT;
+    }
+
+    public final boolean isCooperate() {
+        return this == COOPERATE;
+    }
+
+    public final boolean isNone() {
+        return this == NONE;
+    }
 }
