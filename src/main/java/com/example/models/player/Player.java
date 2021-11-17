@@ -63,6 +63,14 @@ public class Player {
         return PlayerChoice.NONE;
     }
 
+    public boolean hasDefectedLastTurn() {
+        return getLastChoice().isDefect();
+    }
+
+    public boolean hasCooperatedLastTurn() {
+        return getLastChoice().isCooperate();
+    }
+
     public void updateChoicesHistory() {
         choicesHistory.add(currentChoice);
     }
