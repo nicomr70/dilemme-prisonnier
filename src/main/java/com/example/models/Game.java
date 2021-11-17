@@ -10,12 +10,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //TODO faire une fonction qui renvoie un json en string et qui represente le jeu au complet, utiliser JSONObject
 @Getter
 @Setter
 public class Game {
+    public static Map<Integer, Game> games = new HashMap<>();
     private static int gameCounter;
     private int id;
     private Player player1;
@@ -129,6 +132,31 @@ public class Game {
         if (player1.getId() == id) { return player1; }
         if (player2.getId()==id) { return player2; }
         return null;
+    }
+
+
+    public Game waitSecondPlayer() throws InterruptedException {
+        while(!(areAllPlayersHere()))wait();
+        return this;
+    }
+
+    public Game waitPlayerPLay() throws InterruptedException {
+        while(!canEndTurn()) wait();
+        return this;
+    }
+
+    synchronized public Game playMove(int playerId,PlayerChoice move){
+        //TODO verifier aue l'autre joueur a une strategie en place, si oui alors le faire jouer et notifier
+        humanTakeTurn(getPlayerWithId(playerId), move);
+        if(canEndTurn())notifyAll();
+        return this;
+    }
+
+    synchronized public Player addPlayer(String playerName){
+        Player p = new Player(playerName, null);
+        setPlayer(p);
+        if(areAllPlayersHere())notifyAll();
+        return p;
     }
 
 }
