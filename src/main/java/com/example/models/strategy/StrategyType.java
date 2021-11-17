@@ -8,7 +8,8 @@ public enum StrategyType {
     SUSPICIOUS_TIT_FOR_TAT("Donnant-donnant soupçonneux"),
     GENEROUS_TIT_FOR_TAT("Pacificateur naïf"),
     GRIM_TRIGGER("Rancunier"),
-    PAVLOV("Pavlov");
+    PAVLOV("Pavlov"),
+    RANDOM_PAVLOV("Pavlov aléatoire");
 
     private String name;
 

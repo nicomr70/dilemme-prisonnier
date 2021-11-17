@@ -17,6 +17,8 @@ public class StrategyFactory {
                 return new GrimTriggerStrategy();
             case PAVLOV:
                 return new PavlovStrategy();
+            case RANDOM_PAVLOV:
+                return new RandomPavlovStrategy();
             case RANDOM:
             default:
                 return new RandomStrategy();
