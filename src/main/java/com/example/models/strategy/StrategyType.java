@@ -6,6 +6,7 @@ public enum StrategyType {
     RANDOM("Aléatoire"),
     TIT_FOR_TAT("Donnant-donnant"),
     SUSPICIOUS_TIT_FOR_TAT("Donnant-donnant soupçonneux"),
+    RANDOM_TIT_FOR_TAT("Donnant-donnant aléatoire"),
     GENEROUS_TIT_FOR_TAT("Pacificateur naïf"),
     GRIM_TRIGGER("Rancunier"),
     PAVLOV("Pavlov"),
