@@ -28,17 +28,17 @@ public class PlayerScore {
     }
 
     public static void applyCooperated(Player player1, Player player2) {
-        player1.updateScore(SCORE_COOPERATE);
-        player2.updateScore(SCORE_COOPERATE);
+        player1.increaseScore(SCORE_COOPERATE);
+        player2.increaseScore(SCORE_COOPERATE);
     }
 
     public static void applyOneDefectedOther(Player player1, Player player2) {
-        player1.updateScore(SCORE_DEFECT_ONE);
-        player2.updateScore(SCORE_DEFECTED);
+        player1.increaseScore(SCORE_DEFECT_ONE);
+        player2.increaseScore(SCORE_DEFECTED);
     }
 
     public static void applyBothDefected(Player player1, Player player2) {
-        player1.updateScore(SCORE_DEFECT_BOTH);
-        player2.updateScore(SCORE_DEFECT_BOTH);
+        player1.increaseScore(SCORE_DEFECT_BOTH);
+        player2.increaseScore(SCORE_DEFECT_BOTH);
     }
 }
