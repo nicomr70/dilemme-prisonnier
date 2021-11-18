@@ -8,7 +8,7 @@ import java.util.Random;
 
 /** Stratégie Aléatoire */
 class RandomStrategy implements IStrategy {
-    private final double OPPOSITE_CHOICE_DEFAULT_PROBABILITY = 0.1;
+    private static final double OPPOSITE_CHOICE_DEFAULT_PROBABILITY = 0.1;
 
     protected final Random random = SingleRandom.getInstance();
 
