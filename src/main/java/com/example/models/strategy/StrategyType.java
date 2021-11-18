@@ -11,6 +11,7 @@ public enum StrategyType {
     NAIVE_PROBER("Sondeur naïf"),
     GRIM_TRIGGER("Rancunier"),
     SOFT_GRUDGER("Rancunier doux"),
+    GRADUAL("Graduel"),
     PAVLOV("Pavlov"),
     RANDOM_PAVLOV("Pavlov aléatoire");
 
