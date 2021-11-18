@@ -8,14 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import static com.example.RestServer.games;
 import static java.lang.Thread.sleep;
@@ -24,39 +18,30 @@ import static java.lang.Thread.sleep;
 @RestController
 @RequestMapping("/game")
 public class HttpRequestGame {
-
-    static SseEmitter emitter = new SseEmitter();
-
-    /*@GetMapping("/waitPlayerPlay/gameId={gameId}")
-    synchronized ResponseEntity<Game> waitPlayerPlay(@PathVariable(name = "gameId")int gameId) throws InterruptedException {
-        return ResponseEntity.ok(games.get(gameId).waitPlayerPLay());
-    }*/
+    @GetMapping("/waitPlayerPlay/gameId={gameId}")
+    SseEmitter waitPlayerPlay(@PathVariable(name = "gameId")int gameId) {
+        return games.get(gameId).getSseEmitter();
+    }
 
     @PostMapping("/play/gameId={gameId}/playerId={playerId}/move={move}")
-    synchronized ResponseEntity<Game> playMove(@PathVariable(name = "gameId")int gameId, @PathVariable(name = "playerId")int playerId, @PathVariable(name = "move") PlayerChoice move) throws IOException {
-        //TODO savoir sur quel partie on joue (id)
+    synchronized ResponseEntity<Game> playMove(@PathVariable(name = "gameId")int gameId, @PathVariable(name = "playerId")int playerId, @PathVariable(name = "move") PlayerChoice move) throws Exception {
         return ResponseEntity.ok(games.get(gameId).playMove(playerId,move));
     }
 
-    @GetMapping("/allStrategy")
-    public ResponseEntity<Object[]> allStrategy(){
+    @GetMapping("/allStrategies")
+    public ResponseEntity<Object[]> allStrategies(){
         return ResponseEntity.ok(Arrays.stream(StrategyType.values()).map(StrategyType::getName).toArray());
     }
 
-    @GetMapping("/allMove")
-    public ResponseEntity<PlayerChoice[]> allMove(){
+    @GetMapping("/allMoves")
+    public ResponseEntity<PlayerChoice[]> allMoves(){
         return ResponseEntity.ok(PlayerChoice.values());
     }
 
     //ok
     @GetMapping("waitLastPlayer/gameId={gameId}")
-    public SseEmitter waitLastPlayer(@PathVariable(name = "gameId")int gameId) throws InterruptedException {
-        SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
-        sseEmitter.onCompletion(() -> System.out.println("SseEmitter of wait player is completed"));
-        sseEmitter.onTimeout(() -> System.out.println("SseEmitter of wait player  is timed out"));
-        sseEmitter.onError((ex) -> System.out.println("SseEmitter of wait player got error:"+ex));
-        games.get(gameId).setSse(sseEmitter);
-        return sseEmitter;
+    public SseEmitter waitLastPlayer(@PathVariable(name = "gameId")int gameId) {
+        return games.get(gameId).getSseEmitter();
     }
 
     //ok
@@ -69,15 +54,5 @@ public class HttpRequestGame {
     @PostMapping("join/gameId={gameId}/playerName={playerName}")
     public ResponseEntity<Player> joinGame(@PathVariable("gameId")int gameId, @PathVariable("playerName")String playerName) throws IOException {
         return ResponseEntity.ok(games.get(gameId).addPlayer(playerName));
-    }
-
-    @GetMapping("/stream-test/id={gameId}")
-    public SseEmitter streamTest(@PathVariable(name = "gameId")int gameId){
-        SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
-        sseEmitter.onCompletion(() -> System.out.println("SseEmitter is completed"));
-        sseEmitter.onTimeout(() -> System.out.println("SseEmitter is timed out"));
-        sseEmitter.onError((ex) -> System.out.println("SseEmitter got error:"+ex));
-        games.get(gameId).setSse(sseEmitter);
-        return sseEmitter;
     }
 }
