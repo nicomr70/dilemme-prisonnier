@@ -17,6 +17,8 @@ public class StrategyFactory {
                 return new RandomTitForTatStrategy();
             case GRIM_TRIGGER:
                 return new GrimTriggerStrategy();
+            case SOFT_GRUDGER:
+                return new SoftGrudgerStrategy();
             case PAVLOV:
                 return new PavlovStrategy();
             case RANDOM_PAVLOV:

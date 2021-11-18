@@ -9,6 +9,7 @@ public enum StrategyType {
     RANDOM_TIT_FOR_TAT("Donnant-donnant aléatoire"),
     GENEROUS_TIT_FOR_TAT("Pacificateur naïf"),
     GRIM_TRIGGER("Rancunier"),
+    SOFT_GRUDGER("Rancunier doux"),
     PAVLOV("Pavlov"),
     RANDOM_PAVLOV("Pavlov aléatoire");
 
