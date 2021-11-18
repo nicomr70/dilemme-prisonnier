@@ -26,19 +26,6 @@ import static java.lang.Thread.sleep;
 public class HttpRequestGame {
 
     static SseEmitter emitter = new SseEmitter();
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-
-    @PostConstruct
-    public void init() {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            executor.shutdown();
-            try {
-                executor.awaitTermination(1, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }));
-    }
 
     /*@GetMapping("/waitPlayerPlay/gameId={gameId}")
     synchronized ResponseEntity<Game> waitPlayerPlay(@PathVariable(name = "gameId")int gameId) throws InterruptedException {
@@ -63,9 +50,15 @@ public class HttpRequestGame {
 
     //ok
     @GetMapping("waitLastPlayer/gameId={gameId}")
-    public ResponseEntity<Game> waitLastPlayer(@PathVariable(name = "gameId")int gameId) throws InterruptedException {
-        return ResponseEntity.ok(games.get(gameId).waitSecondPlayer());
+    public SseEmitter waitLastPlayer(@PathVariable(name = "gameId")int gameId) throws InterruptedException {
+        SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
+        sseEmitter.onCompletion(() -> System.out.println("SseEmitter of wait player is completed"));
+        sseEmitter.onTimeout(() -> System.out.println("SseEmitter of wait player  is timed out"));
+        sseEmitter.onError((ex) -> System.out.println("SseEmitter of wait player got error:"+ex));
+        games.get(gameId).setSse(sseEmitter);
+        return sseEmitter;
     }
+
     //ok
     @GetMapping("initialState/gameId={gameId}")
     public ResponseEntity<Game> gameInitialState(@PathVariable(name = "gameId")int gameId){
@@ -74,7 +67,7 @@ public class HttpRequestGame {
 
     //ok
     @PostMapping("join/gameId={gameId}/playerName={playerName}")
-    public ResponseEntity<Player> joinGame(@PathVariable("gameId")int gameId, @PathVariable("playerName")String playerName) {
+    public ResponseEntity<Player> joinGame(@PathVariable("gameId")int gameId, @PathVariable("playerName")String playerName) throws IOException {
         return ResponseEntity.ok(games.get(gameId).addPlayer(playerName));
     }
 

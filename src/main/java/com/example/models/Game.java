@@ -29,7 +29,9 @@ public class Game {
     @Getter(AccessLevel.NONE)
     private int turnCount = 0;
     private int maxTurnCount;
+    @Getter(AccessLevel.NONE)
     private SseEmitter sse;
+    private boolean allPlayerIsHere;
 
     public Game(Player player1, Player player2, int maxTurnCount) {
         id = ++gameCounter;
@@ -37,6 +39,7 @@ public class Game {
         this.player2 = player2;
         moveHistory = new ArrayList<>();
         this.maxTurnCount = maxTurnCount;
+        this.allPlayerIsHere = !(player1==null || player2==null);
 
     }
 
@@ -150,10 +153,10 @@ public class Game {
         return this;
     }
 
-    synchronized public Player addPlayer(String playerName){
+    synchronized public Player addPlayer(String playerName) throws IOException {
         Player p = new Player(playerName, null);
         setPlayer(p);
-        if(areAllPlayersHere())notifyAll();
+        if(areAllPlayersHere())sse.send(this);
         return p;
     }
 }
