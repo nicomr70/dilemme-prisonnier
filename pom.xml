@@ -16,7 +16,7 @@
   <name>java-getting-started</name>
 
   <properties>
-    <java.version>1.8</java.version>
+    <java.version>15</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
@@ -29,7 +29,7 @@
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20180130</version>
+      <version>20210307</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -57,7 +57,7 @@
     <dependency>
     <groupId>org.webjars</groupId>
       <artifactId>webjars-locator</artifactId>
-      <version>0.30</version>
+      <version>0.42</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -73,7 +73,7 @@
       <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
-        <version>1.18.20</version>
+        <version>1.18.22</version>
       </dependency>
   </dependencies>
 
@@ -97,14 +97,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>17</source>
-          <target>17</target>
-        </configuration>
       </plugin>
     </plugins>
   </build>
