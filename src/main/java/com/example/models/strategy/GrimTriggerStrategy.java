@@ -4,7 +4,7 @@ import com.example.models.player.Player;
 import com.example.models.player.PlayerChoice;
 
 /** Stratégie Rancunier */
-final class GrudgerStrategy implements IStrategy {
+final class GrimTriggerStrategy implements IStrategy {
     private boolean allowDefect;
 
     @Override
@@ -12,7 +12,7 @@ final class GrudgerStrategy implements IStrategy {
         if (allowDefect) {
             return PlayerChoice.DEFECT;
         } else {
-            if (turnCount != 1 && otherPlayer.getLastChoice() == PlayerChoice.DEFECT) {
+            if (turnCount != 1 && otherPlayer.hasDefectedLastTurn()) {
                 allowDefect = true;
                 return PlayerChoice.DEFECT;
             }

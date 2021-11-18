@@ -5,8 +5,14 @@ public enum StrategyType {
     DEFECT("Toujours trahir"),
     RANDOM("Aléatoire"),
     TIT_FOR_TAT("Donnant-donnant"),
-    GRUDGER("Rancunier"),
-    PAVLOV("Pavlov");
+    SUSPICIOUS_TIT_FOR_TAT("Donnant-donnant soupçonneux"),
+    RANDOM_TIT_FOR_TAT("Donnant-donnant aléatoire"),
+    GENEROUS_TIT_FOR_TAT("Pacificateur naïf"),
+    NAIVE_PROBER("Sondeur naïf"),
+    GRIM_TRIGGER("Rancunier"),
+    SOFT_GRUDGER("Rancunier doux"),
+    PAVLOV("Pavlov"),
+    RANDOM_PAVLOV("Pavlov aléatoire");
 
     private String name;
 
