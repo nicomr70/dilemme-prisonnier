@@ -15,6 +15,8 @@ public class StrategyFactory {
                 return new GenerousTitForTatStrategy();
             case RANDOM_TIT_FOR_TAT:
                 return new RandomTitForTatStrategy();
+            case NAIVE_PROBER:
+                return new NaiveProberStrategy();
             case GRIM_TRIGGER:
                 return new GrimTriggerStrategy();
             case SOFT_GRUDGER:

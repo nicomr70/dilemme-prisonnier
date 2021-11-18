@@ -8,6 +8,7 @@ public enum StrategyType {
     SUSPICIOUS_TIT_FOR_TAT("Donnant-donnant soupçonneux"),
     RANDOM_TIT_FOR_TAT("Donnant-donnant aléatoire"),
     GENEROUS_TIT_FOR_TAT("Pacificateur naïf"),
+    NAIVE_PROBER("Sondeur naïf"),
     GRIM_TRIGGER("Rancunier"),
     SOFT_GRUDGER("Rancunier doux"),
     PAVLOV("Pavlov"),
