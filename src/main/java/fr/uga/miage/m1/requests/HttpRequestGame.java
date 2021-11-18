@@ -20,12 +20,12 @@ import static java.lang.Thread.sleep;
 public class HttpRequestGame {
     @GetMapping("/waitPlayerPlay/gameId={gameId}")
     SseEmitter waitPlayerPlay(@PathVariable(name = "gameId")int gameId) {
-        return RestServer.games.get(gameId).getSseEmitter();
+        return RestServer.getGame(gameId).getSseEmitter();
     }
 
     @PostMapping("/play/gameId={gameId}/playerId={playerId}/move={move}")
     synchronized ResponseEntity<Game> playMove(@PathVariable(name = "gameId")int gameId, @PathVariable(name = "playerId")int playerId, @PathVariable(name = "move") PlayerChoice move) throws Exception {
-        return ResponseEntity.ok(RestServer.games.get(gameId).playMove(playerId,move));
+        return ResponseEntity.ok(RestServer.getGame(gameId).playMove(playerId,move));
     }
 
     @GetMapping("/allStrategies")
@@ -41,18 +41,18 @@ public class HttpRequestGame {
     //ok
     @GetMapping("waitLastPlayer/gameId={gameId}")
     public SseEmitter waitLastPlayer(@PathVariable(name = "gameId")int gameId) {
-        return RestServer.games.get(gameId).getSseEmitter();
+        return RestServer.getGame(gameId).getSseEmitter();
     }
 
     //ok
     @GetMapping("initialState/gameId={gameId}")
     public ResponseEntity<Game> gameInitialState(@PathVariable(name = "gameId")int gameId){
-        return ResponseEntity.ok(RestServer.games.get(gameId));
+        return ResponseEntity.ok(RestServer.getGame(gameId));
     }
 
     //ok
     @PostMapping("join/gameId={gameId}/playerName={playerName}")
     public ResponseEntity<Player> joinGame(@PathVariable("gameId")int gameId, @PathVariable("playerName")String playerName) throws IOException {
-        return ResponseEntity.ok(RestServer.games.get(gameId).addPlayer(playerName));
+        return ResponseEntity.ok(RestServer.getGame(gameId).addPlayer(playerName));
     }
 }

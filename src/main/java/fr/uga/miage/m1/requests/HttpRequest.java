@@ -17,14 +17,14 @@ public class HttpRequest {
     //ici pour recup toutes les parties creer et non rempli
     @GetMapping("allGames")//ok
     public ResponseEntity<List<Game>> allGames(){
-        return ResponseEntity.ok(new ArrayList<>(RestServer.games.values()));
+        return ResponseEntity.ok(new ArrayList<>(RestServer.getGamesCollection()));
     }
 
     //ici permet de creer une partie
     @PostMapping("createGame/maxTurnCount={maxTurnCount}")
     public ResponseEntity<Game> gameFactory(@PathVariable(name = "maxTurnCount") int maxTurnCount){//ok
         Game g = new Game(null, null, maxTurnCount);
-        RestServer.games.put(g.getId(),g);
+        RestServer.registerGame(g);
         return ResponseEntity.ok(g);
     }
 
