@@ -3,7 +3,7 @@ package com.example.models.strategy;
 import com.example.models.player.Player;
 import com.example.models.player.PlayerChoice;
 
-/** Stratégie Pavlov */
+/** Stratégie Pavlov aléatoire */
 final class RandomPavlovStrategy extends RandomStrategy {
     @Override
     public PlayerChoice execute(int turnCount, Player player, Player otherPlayer) {
