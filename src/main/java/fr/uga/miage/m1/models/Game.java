@@ -11,58 +11,60 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.logging.Logger;
 
 @Getter
 @Setter
 public class Game {
-    public static Map<Integer, Game> games = new HashMap<>();
     private static int gameCounter;
     private int id;
     private Player player1;
     private Player player2;
-    private List<PlayerMove> moveHistory;
+    private List<PlayerMove> moveHistory = new ArrayList<>();
     @Getter(AccessLevel.NONE)
     private int turnCount = 0;
     private int maxTurnCount;
     @Getter(AccessLevel.NONE)
-    private SseEmitter sseEmitter;
+    private SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
     private boolean allPlayerAreHere;
+    @Getter(AccessLevel.NONE)
+    private static final Logger LOGGER = Logger.getLogger(Game.class.getPackageName());
 
     public Game(Player player1, Player player2, int maxTurnCount) {
         id = ++gameCounter;
         this.player1 = player1;
         this.player2 = player2;
-        moveHistory = new ArrayList<>();
         this.maxTurnCount = maxTurnCount;
         allPlayerAreHere = !(player1 == null || player2 == null);
-        sseEmitter = new SseEmitter(Long.MAX_VALUE);
-        sseEmitter.onCompletion(() -> System.out.println("SseEmitter of game " + id + " is completed."));
-        sseEmitter.onTimeout(() -> System.out.println("SseEmitter of game " + id + " is timed out."));
-        sseEmitter.onError((ex) -> System.err.println("SseEmitter of game " + id + " got error : " + ex));
+        sseEmitter.onCompletion(() -> LOGGER.info(() -> String.format("SSE emitter is completed. (gameId = %d)%n", id)));
+        sseEmitter.onTimeout(() -> LOGGER.warning(() -> String.format("SSE emitter timed out. (gameId = %d)%n", id)));
+        sseEmitter.onError(ex -> LOGGER.severe(() -> String.format("SSE emitter got an error (gameId = %d) : %s%n", id, ex)));
     }
 
     public int getId() {
         return id;
     }
 
-    public void AITakeTurn(Player AIPlayer) throws Exception {
-        Player otherPlayer = AIPlayer == player1 ? player2 : player1;
-        PlayerChoice choice = AIPlayer.strategyPlay(turnCount, otherPlayer);
+    public void aiTakeTurn(Player aiPlayer) throws Exception {
+        Player otherPlayer = aiPlayer == player1 ? player2 : player1;
+        PlayerChoice choice = aiPlayer.strategyPlay(turnCount, otherPlayer);
         PlayerMove move = new PlayerMove(player1, choice, turnCount);
         moveHistory.add(move);
-        System.out.println(AIPlayer.name + " a " + (choice == PlayerChoice.COOPERATE ? "coopéré" : "trahi") + "."); // To be removed in final version
-        AIPlayer.canPlay = false;
+        aiPlayer.canPlay = false;
+        LOGGER.info(() ->
+                String.format("%s a %s.", aiPlayer.name, (choice == PlayerChoice.COOPERATE ? "coopéré" : "trahi"))
+        );
     }
 
     public synchronized void humanTakeTurn(Player humanPlayer, PlayerChoice choice) {
         humanPlayer.manualPlay(choice);
         PlayerMove move = new PlayerMove(player1, choice, turnCount);
         moveHistory.add(move);
-        System.out.println(humanPlayer.name + " a " + (choice == PlayerChoice.COOPERATE ? "coopéré" : "trahi") + "."); // To be removed in final version
         humanPlayer.canPlay = false;
+        LOGGER.info(() ->
+                String.format("%s a %s.", humanPlayer.name, (choice == PlayerChoice.COOPERATE ? "coopéré" : "trahi"))
+        );
     }
 
     private void calculateTurnScore() {
@@ -102,25 +104,27 @@ public class Game {
         player2.canPlay = true;
     }
 
-    public void turn() throws Exception {
+    public void testTurn() throws Exception {
         turnCount++;
-        AITakeTurn(player1);
-        AITakeTurn(player2);
+        aiTakeTurn(player1);
+        aiTakeTurn(player2);
         endTurn();
     }
 
-    public void launch() {
+    public void testLaunch() {
         if (maxTurnCount > 0) {
             try {
                 while (turnCount < maxTurnCount) {
-                    System.out.println("<<< Tour " + (turnCount + 1) + " >>>");
-                    turn();
+                    LOGGER.info(() -> String.format("<<< Tour %d >>>", turnCount + 1));
+                    testTurn();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        System.out.println("SCORES :\n" + player1.name + " : " + player1.getScore() + " ; " + player2.name + " : " + player2.getScore());
+        LOGGER.info(() -> String.format(
+                "SCORES :%n%s : %d ; %s : %d", player1.name, player1.getScore(), player2.name, player2.getScore()
+        ));
     }
 
     public void setPlayer(Player player) {
@@ -145,18 +149,18 @@ public class Game {
         return null;
     }
 
-    synchronized public Game playMove(int playerId, PlayerChoice move) throws Exception {
+    public synchronized Game playMove(int playerId, PlayerChoice move) throws Exception {
         Player player = getPlayerWithId(playerId);
         Player otherPlayer = player == player1 ? player1 : player2;
         if (otherPlayer.getStrategy() != null) {
-            AITakeTurn(otherPlayer);
+            aiTakeTurn(otherPlayer);
         }
         humanTakeTurn(player, move);
         if (canEndTurn()) sseEmitter.send(this);
         return this;
     }
 
-    synchronized public Player addPlayer(String playerName) throws IOException {
+    public synchronized Player addPlayer(String playerName) throws IOException {
         Player p = new Player(playerName, null);
         setPlayer(p);
         if (areAllPlayersHere()) sseEmitter.send(this);

@@ -10,6 +10,6 @@ public class TestGame {
         Player playerAlice = new Player("Alice", StrategyFactory.getStrategyFromType(StrategyType.DEFECT));
         Player playerBob = new Player("Bob", StrategyFactory.getStrategyFromType(StrategyType.GRADUAL));
         Game game = new Game(playerAlice, playerBob, 20);
-        game.launch();
+        game.testLaunch();
     }
 }
