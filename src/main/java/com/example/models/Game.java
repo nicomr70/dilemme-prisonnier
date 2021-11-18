@@ -8,7 +8,9 @@ import com.example.models.player.PlayerScore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +29,7 @@ public class Game {
     @Getter(AccessLevel.NONE)
     private int turnCount = 0;
     private int maxTurnCount;
+    private SseEmitter sse;
 
     public Game(Player player1, Player player2, int maxTurnCount) {
         id = ++gameCounter;
@@ -140,15 +143,10 @@ public class Game {
         return this;
     }
 
-    public Game waitPlayerPLay() throws InterruptedException {
-        while(!canEndTurn()) wait();
-        return this;
-    }
-
-    synchronized public Game playMove(int playerId,PlayerChoice move){
+    synchronized public Game playMove(int playerId,PlayerChoice move) throws IOException {
         //TODO verifier aue l'autre joueur a une strategie en place, si oui alors le faire jouer et notifier
         humanTakeTurn(getPlayerWithId(playerId), move);
-        if(canEndTurn())notifyAll();
+        if(canEndTurn())sse.send(this);
         return this;
     }
 
@@ -158,5 +156,4 @@ public class Game {
         if(areAllPlayersHere())notifyAll();
         return p;
     }
-
 }
