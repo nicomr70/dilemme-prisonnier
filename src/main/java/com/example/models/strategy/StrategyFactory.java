@@ -2,32 +2,23 @@ package com.example.models.strategy;
 
 public class StrategyFactory {
     public static IStrategy getStrategyFromType(StrategyType strategyType) {
-        switch (strategyType) {
-            case COOPERATE:
-                return new CooperateStrategy();
-            case DEFECT:
-                return new DefectStrategy();
-            case TIT_FOR_TAT:
-                return new TitForTatStrategy();
-            case SUSPICIOUS_TIT_FOR_TAT:
-                return new SuspiciousTitForTatStrategy();
-            case GENEROUS_TIT_FOR_TAT:
-                return new GenerousTitForTatStrategy();
-            case RANDOM_TIT_FOR_TAT:
-                return new RandomTitForTatStrategy();
-            case NAIVE_PROBER:
-                return new NaiveProberStrategy();
-            case GRIM_TRIGGER:
-                return new GrimTriggerStrategy();
-            case SOFT_GRUDGER:
-                return new SoftGrudgerStrategy();
-            case PAVLOV:
-                return new PavlovStrategy();
-            case RANDOM_PAVLOV:
-                return new RandomPavlovStrategy();
-            case RANDOM:
-            default:
-                return new RandomStrategy();
+        if (strategyType == null) {
+            return new RandomStrategy();
         }
+        return switch (strategyType) {
+            case COOPERATE -> new CooperateStrategy();
+            case DEFECT -> new DefectStrategy();
+            case TIT_FOR_TAT -> new TitForTatStrategy();
+            case SUSPICIOUS_TIT_FOR_TAT -> new SuspiciousTitForTatStrategy();
+            case GENEROUS_TIT_FOR_TAT -> new GenerousTitForTatStrategy();
+            case RANDOM_TIT_FOR_TAT -> new RandomTitForTatStrategy();
+            case NAIVE_PROBER -> new NaiveProberStrategy();
+            case GRIM_TRIGGER -> new GrimTriggerStrategy();
+            case SOFT_GRUDGER -> new SoftGrudgerStrategy();
+            case GRADUAL -> new GradualStrategy();
+            case PAVLOV -> new PavlovStrategy();
+            case RANDOM_PAVLOV -> new RandomPavlovStrategy();
+            case RANDOM -> new RandomStrategy();
+        };
     }
 }

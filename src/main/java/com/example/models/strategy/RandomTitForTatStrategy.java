@@ -3,7 +3,7 @@ package com.example.models.strategy;
 import com.example.models.player.Player;
 import com.example.models.player.PlayerChoice;
 
-/** Stratégie Donnant-donnant */
+/** Stratégie Donnant-donnant aléatoire */
 final class RandomTitForTatStrategy extends RandomStrategy {
     @Override
     public PlayerChoice execute(int turnCount, Player player, Player otherPlayer) {

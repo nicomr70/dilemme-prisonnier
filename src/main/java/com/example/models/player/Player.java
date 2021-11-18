@@ -6,32 +6,33 @@ import lombok.Getter;
 
 import java.util.EmptyStackException;
 import java.util.Stack;
+import java.util.function.BiFunction;
 
 @Getter
 public class Player {
     @Getter(AccessLevel.NONE)
-    static int counter_player;
+    static int playerCounter;
     private final int id;
     private IStrategy strategy;
     private PlayerChoice currentChoice = PlayerChoice.NONE;
-    private Stack<PlayerChoice> choicesHistory;
+    private final Stack<PlayerChoice> choicesHistory;
     private final PlayerScore score;
 
-    public boolean canPlay;
     public String name;
+    public boolean canPlay;
 
 
     public Player(String name) {
-        this.id=++counter_player;
-        this.name = name;
+        id = ++playerCounter;
         score = new PlayerScore();
+        choicesHistory = new Stack<>();
+        this.name = name;
         canPlay = true;
     }
 
     public Player(String name, IStrategy strategy) {
         this(name);
         this.strategy = strategy;
-        choicesHistory = new Stack<>();
     }
 
     public PlayerChoice strategyPlay(int turnCount, Player otherPlayer) throws Exception {
@@ -83,11 +84,17 @@ public class Player {
         return score.getPreviousValue();
     }
 
-    public void updateScore(int earnedPoints) {
+    public void increaseScore(int earnedPoints) {
         score.addToValue(earnedPoints);
     }
 
     public int getId() {
         return id;
+    }
+
+    public int getChoiceCount(PlayerChoice playerChoice) {
+        BiFunction<Integer, PlayerChoice, Integer> countDefectReducer =
+                (counter, choice) -> counter + (choice == playerChoice ? 1 : 0);
+        return choicesHistory.stream().reduce(0, countDefectReducer, Integer::sum);
     }
 }
