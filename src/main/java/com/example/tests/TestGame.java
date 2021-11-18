@@ -1,4 +1,4 @@
-package com.example;
+package com.example.tests;
 
 import com.example.models.Game;
 import com.example.models.player.Player;

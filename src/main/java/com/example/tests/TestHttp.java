@@ -1,4 +1,4 @@
-package com.example;
+package com.example.tests;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 @RestController
 @RequestMapping("/test")
-public class HttpTest{
+public class TestHttp {
 
     @GetMapping("/ping")
-    String db() {
+    String pong() {
       return "pong";
     }
 
