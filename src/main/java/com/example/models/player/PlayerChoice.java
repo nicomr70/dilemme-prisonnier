@@ -25,4 +25,8 @@ public enum PlayerChoice {
     public final boolean isNone() {
         return this == NONE;
     }
+
+    public final boolean is(PlayerChoice choice) {
+        return this == choice;
+    }
 }
