@@ -11,7 +11,6 @@ public class RestServer {
     public static Map<Integer, Game> games = new HashMap<>();
 
     public static void main(String[] args){
-        System.out.println("go Firebase");
         SpringApplication.run(RestServer.class, args);
     }
 

@@ -1,4 +1,4 @@
-package com.example;
+package com.example.requests;
 
 import com.example.models.Game;
 import com.example.models.player.Player;
@@ -53,7 +53,7 @@ public class HttpRequestGame {
 
     @GetMapping("/allStrategy")
     public ResponseEntity<Object[]> allStrategy(){
-        return ResponseEntity.ok(Arrays.stream(StrategyType.values()).map((value)->value.getName()).toArray());
+        return ResponseEntity.ok(Arrays.stream(StrategyType.values()).map(StrategyType::getName).toArray());
     }
 
     @GetMapping("/allMove")

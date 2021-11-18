@@ -1,4 +1,4 @@
-package com.example;
+package com.example.requests;
 
 import com.example.models.Game;
 import com.example.models.player.Player;
@@ -19,7 +19,7 @@ public class HttpRequest {
     //ici pour recup toutes les parties creer et non rempli
     @GetMapping("allGames")//ok
     public ResponseEntity<List<Game>> allGames(){
-        return ResponseEntity.ok(new ArrayList<Game>(games.values()));
+        return ResponseEntity.ok(new ArrayList<>(games.values()));
     }
 
     //ici permet de creer une partie
