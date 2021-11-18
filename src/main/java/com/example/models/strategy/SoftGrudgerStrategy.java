@@ -5,6 +5,7 @@ import com.example.models.player.PlayerChoice;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -12,21 +13,19 @@ import java.util.stream.Stream;
 final class SoftGrudgerStrategy implements IStrategy {
     private boolean allowPunishment;
 
-    private final PlayerChoice[] punishment = {
+    private final List<PlayerChoice> punishment = List.of(
             PlayerChoice.DEFECT,
             PlayerChoice.DEFECT,
             PlayerChoice.DEFECT,
             PlayerChoice.DEFECT,
             PlayerChoice.COOPERATE,
             PlayerChoice.COOPERATE
-    };
-
-    private final Supplier<Stream<PlayerChoice>> punishmentStreamSupplier = () -> Arrays.stream(punishment);
+    );
 
     private Iterator<PlayerChoice> punishmentIterator;
 
     private void resetPunishmentIterator() {
-        punishmentIterator = punishmentStreamSupplier.get().iterator();
+        punishmentIterator = punishment.stream().iterator();
     }
 
     SoftGrudgerStrategy() {
@@ -39,10 +38,10 @@ final class SoftGrudgerStrategy implements IStrategy {
             return punishmentIterator.next();
         } else {
             if (!punishmentIterator.hasNext()) {
-                resetPunishmentIterator();
                 allowPunishment = false;
             }
             if (turnCount != 1 && otherPlayer.hasDefectedLastTurn()) {
+                resetPunishmentIterator();
                 allowPunishment = true;
                 return punishmentIterator.next();
             }
