@@ -1,6 +1,8 @@
 package fr.uga.miage.m1.models.strategy;
 
 public class StrategyFactory {
+    private StrategyFactory() {}
+
     public static IStrategy getStrategyFromType(StrategyType strategyType) {
         if (strategyType == null) {
             return new RandomStrategy();
