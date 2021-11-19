@@ -4,10 +4,10 @@ public class PlayerScore {
     private int currentValue;
     private int previousValue;
 
-    public final static int SCORE_DEFECTED = 0;
-    public final static int SCORE_DEFECT_ONE = 5;
-    public final static int SCORE_DEFECT_BOTH = 1;
-    public final static int SCORE_COOPERATE = 3;
+    public static final int SCORE_DEFECTED = 0;
+    public static final int SCORE_DEFECT_ONE = 5;
+    public static final int SCORE_DEFECT_BOTH = 1;
+    public static final int SCORE_COOPERATE = 3;
 
     public int getCurrentValue() {
         return currentValue;
