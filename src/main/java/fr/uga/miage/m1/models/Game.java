@@ -1,5 +1,6 @@
 package fr.uga.miage.m1.models;
 
+import fr.uga.miage.m1.exceptions.StrategyException;
 import fr.uga.miage.m1.models.player.Player;
 import fr.uga.miage.m1.models.player.PlayerChoice;
 import fr.uga.miage.m1.models.player.PlayerMove;
@@ -46,14 +47,14 @@ public class Game {
         return id;
     }
 
-    public void aiTakeTurn(Player aiPlayer) throws Exception {
+    public void aiTakeTurn(Player aiPlayer) throws StrategyException {
         Player otherPlayer = aiPlayer == player1 ? player2 : player1;
         PlayerChoice choice = aiPlayer.strategyPlay(turnCount, otherPlayer);
         PlayerMove move = new PlayerMove(player1, choice, turnCount);
         moveHistory.add(move);
-        aiPlayer.canPlay = false;
+        aiPlayer.disallowToPlay();
         LOGGER.info(() ->
-                String.format("%s a %s.", aiPlayer.name, (choice == PlayerChoice.COOPERATE ? "coopéré" : "trahi"))
+                String.format("%s a %s.", aiPlayer.getName(), (choice == PlayerChoice.COOPERATE ? "coopéré" : "trahi"))
         );
     }
 
@@ -61,9 +62,9 @@ public class Game {
         humanPlayer.manualPlay(choice);
         PlayerMove move = new PlayerMove(player1, choice, turnCount);
         moveHistory.add(move);
-        humanPlayer.canPlay = false;
+        humanPlayer.disallowToPlay();
         LOGGER.info(() ->
-                String.format("%s a %s.", humanPlayer.name, (choice == PlayerChoice.COOPERATE ? "coopéré" : "trahi"))
+                String.format("%s a %s.", humanPlayer.getName(), (choice == PlayerChoice.COOPERATE ? "coopéré" : "trahi"))
         );
     }
 
@@ -93,18 +94,18 @@ public class Game {
     }
 
     public boolean canEndTurn() {
-        return !player1.canPlay && !player2.canPlay;
+        return !player1.canPlay() && !player2.canPlay();
     }
 
     public void endTurn() {
         calculateTurnScore();
         player1.updateChoicesHistory();
         player2.updateChoicesHistory();
-        player1.canPlay = true;
-        player2.canPlay = true;
+        player1.allowToPlay();
+        player2.allowToPlay();
     }
 
-    public void testTurn() throws Exception {
+    public void testTurn() throws StrategyException {
         turnCount++;
         aiTakeTurn(player1);
         aiTakeTurn(player2);
@@ -123,7 +124,9 @@ public class Game {
             }
         }
         LOGGER.info(() -> String.format(
-                "SCORES :%n%s : %d ; %s : %d", player1.name, player1.getScore(), player2.name, player2.getScore()
+                "SCORES :%n%s : %d ; %s : %d",
+                player1.getName(), player1.getScore(),
+                player2.getName(), player2.getScore()
         ));
     }
 
@@ -149,7 +152,7 @@ public class Game {
         return null;
     }
 
-    public synchronized Game playMove(int playerId, PlayerChoice move) throws Exception {
+    public synchronized Game playMove(int playerId, PlayerChoice move) throws StrategyException, IOException {
         Player player = getPlayerWithId(playerId);
         Player otherPlayer = player == player1 ? player1 : player2;
         if (otherPlayer.getStrategy() != null) {

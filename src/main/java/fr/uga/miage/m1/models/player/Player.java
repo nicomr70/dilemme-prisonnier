@@ -1,11 +1,13 @@
 package fr.uga.miage.m1.models.player;
 
+import fr.uga.miage.m1.exceptions.StrategyException;
 import fr.uga.miage.m1.models.strategy.IStrategy;
 import lombok.AccessLevel;
 import lombok.Getter;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.EmptyStackException;
-import java.util.Stack;
 import java.util.function.BiFunction;
 
 @Getter
@@ -15,17 +17,14 @@ public class Player {
     private final int id;
     private IStrategy strategy;
     private PlayerChoice currentChoice = PlayerChoice.NONE;
-    private final Stack<PlayerChoice> choicesHistory;
-    private final PlayerScore score;
-
-    public String name;
-    public boolean canPlay;
+    private final Deque<PlayerChoice> choicesHistory = new ArrayDeque<>();
+    private final PlayerScore score = new PlayerScore();
+    private final String name;
+    private boolean canPlay;
 
 
     public Player(String name) {
         id = ++playerCounter;
-        score = new PlayerScore();
-        choicesHistory = new Stack<>();
         this.name = name;
         canPlay = true;
     }
@@ -35,14 +34,14 @@ public class Player {
         this.strategy = strategy;
     }
 
-    public PlayerChoice strategyPlay(int turnCount, Player otherPlayer) throws Exception {
+    public PlayerChoice strategyPlay(int turnCount, Player otherPlayer) throws StrategyException {
         if (strategy != null) {
             PlayerChoice choice = strategy.execute(turnCount, this, otherPlayer);
             currentChoice = choice;
             canPlay = false;
             return choice;
         } else {
-            throw new Exception("player has no strategy");
+            throw new StrategyException("strategy not found");
         }
     }
 
@@ -57,7 +56,7 @@ public class Player {
 
     public PlayerChoice getLastChoice() {
         try {
-            return choicesHistory.peek();
+            return choicesHistory.peekLast();
         } catch (EmptyStackException e){
             e.printStackTrace();
         }
@@ -90,6 +89,22 @@ public class Player {
 
     public int getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean canPlay() {
+        return canPlay;
+    }
+
+    public void allowToPlay() {
+        canPlay = true;
+    }
+
+    public void disallowToPlay() {
+        canPlay = false;
     }
 
     public int getChoiceCount(PlayerChoice playerChoice) {

@@ -1,5 +1,6 @@
 package fr.uga.miage.m1.requests;
 
+import fr.uga.miage.m1.exceptions.StrategyException;
 import fr.uga.miage.m1.models.Game;
 import fr.uga.miage.m1.models.player.Player;
 import fr.uga.miage.m1.models.player.PlayerChoice;
@@ -19,13 +20,17 @@ import static java.lang.Thread.sleep;
 @RequestMapping("/game")
 public class HttpRequestGame {
     @GetMapping("/waitPlayerPlay/gameId={gameId}")
-    SseEmitter waitPlayerPlay(@PathVariable(name = "gameId")int gameId) {
+    public SseEmitter waitPlayerPlay(@PathVariable(name = "gameId")int gameId) {
         return RestServer.getGame(gameId).getSseEmitter();
     }
 
     @PostMapping("/play/gameId={gameId}/playerId={playerId}/move={move}")
-    synchronized ResponseEntity<Game> playMove(@PathVariable(name = "gameId")int gameId, @PathVariable(name = "playerId")int playerId, @PathVariable(name = "move") PlayerChoice move) throws Exception {
-        return ResponseEntity.ok(RestServer.getGame(gameId).playMove(playerId,move));
+    public synchronized ResponseEntity<Game> playMove(
+            @PathVariable(name = "gameId") int gameId,
+            @PathVariable(name = "playerId") int playerId,
+            @PathVariable(name = "move") PlayerChoice move
+    ) throws StrategyException, IOException {
+        return ResponseEntity.ok(RestServer.getGame(gameId).playMove(playerId, move));
     }
 
     @GetMapping("/allStrategies")
@@ -38,21 +43,25 @@ public class HttpRequestGame {
         return ResponseEntity.ok(PlayerChoice.values());
     }
 
-    //ok
     @GetMapping("waitLastPlayer/gameId={gameId}")
-    public SseEmitter waitLastPlayer(@PathVariable(name = "gameId")int gameId) {
+    public SseEmitter waitLastPlayer(
+            @PathVariable(name = "gameId") int gameId
+    ) {
         return RestServer.getGame(gameId).getSseEmitter();
     }
 
-    //ok
     @GetMapping("initialState/gameId={gameId}")
-    public ResponseEntity<Game> gameInitialState(@PathVariable(name = "gameId")int gameId){
+    public ResponseEntity<Game> gameInitialState(
+            @PathVariable(name = "gameId") int gameId
+    ){
         return ResponseEntity.ok(RestServer.getGame(gameId));
     }
 
-    //ok
     @PostMapping("join/gameId={gameId}/playerName={playerName}")
-    public ResponseEntity<Player> joinGame(@PathVariable("gameId")int gameId, @PathVariable("playerName")String playerName) throws IOException {
+    public ResponseEntity<Player> joinGame(
+            @PathVariable("gameId") int gameId,
+            @PathVariable("playerName")String playerName
+    ) throws IOException {
         return ResponseEntity.ok(RestServer.getGame(gameId).addPlayer(playerName));
     }
 }
