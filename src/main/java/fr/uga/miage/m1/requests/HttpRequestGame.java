@@ -1,11 +1,11 @@
 package fr.uga.miage.m1.requests;
 
+import fr.uga.miage.m1.RestServer;
 import fr.uga.miage.m1.exceptions.StrategyException;
 import fr.uga.miage.m1.models.Game;
 import fr.uga.miage.m1.models.player.Player;
 import fr.uga.miage.m1.models.player.PlayerChoice;
 import fr.uga.miage.m1.models.strategy.StrategyType;
-import fr.uga.miage.m1.RestServer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -13,24 +13,26 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static java.lang.Thread.sleep;
-
 @CrossOrigin
 @RestController
 @RequestMapping("/game")
 public class HttpRequestGame {
     @GetMapping("/waitPlayerPlay/gameId={gameId}")
     public SseEmitter waitPlayerPlay(@PathVariable(name = "gameId")int gameId) {
-        return RestServer.getGame(gameId).getSseEmitter();
+        return RestServer
+                .getGamePool()
+                .getGame(gameId)
+                .poolPlayGame
+                .sseEmitterFactory("wait player play (gameId ="+gameId+")");
     }
 
-    @PostMapping("/play/gameId={gameId}/playerId={playerId}/move={move}")
+    @PutMapping("/play/gameId={gameId}/playerId={playerId}/move={move}")
     public synchronized ResponseEntity<Game> playMove(
             @PathVariable(name = "gameId") int gameId,
             @PathVariable(name = "playerId") int playerId,
             @PathVariable(name = "move") PlayerChoice move
     ) throws StrategyException, IOException {
-        return ResponseEntity.ok(RestServer.getGame(gameId).playMove(playerId, move));
+        return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).playMove(playerId, move));
     }
 
     @GetMapping("/allStrategies")
@@ -47,21 +49,25 @@ public class HttpRequestGame {
     public SseEmitter waitLastPlayer(
             @PathVariable(name = "gameId") int gameId
     ) {
-        return RestServer.getGame(gameId).getSseEmitter();
+        return RestServer
+                .getGamePool()
+                .getGame(gameId)
+                .poolWaitPlayer
+                .sseEmitterFactory("wait player (gameId="+gameId+")");
     }
 
     @GetMapping("initialState/gameId={gameId}")
     public ResponseEntity<Game> gameInitialState(
             @PathVariable(name = "gameId") int gameId
     ){
-        return ResponseEntity.ok(RestServer.getGame(gameId));
+        return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId));
     }
 
-    @PostMapping("join/gameId={gameId}/playerName={playerName}")
+    @PutMapping("join/gameId={gameId}/playerName={playerName}")
     public ResponseEntity<Player> joinGame(
             @PathVariable("gameId") int gameId,
             @PathVariable("playerName")String playerName
     ) throws IOException {
-        return ResponseEntity.ok(RestServer.getGame(gameId).addPlayer(playerName));
+        return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).addPlayer(playerName));
     }
 }

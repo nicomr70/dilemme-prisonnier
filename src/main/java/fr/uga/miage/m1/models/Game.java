@@ -5,10 +5,10 @@ import fr.uga.miage.m1.models.player.Player;
 import fr.uga.miage.m1.models.player.PlayerChoice;
 import fr.uga.miage.m1.models.player.PlayerMove;
 import fr.uga.miage.m1.models.player.PlayerScore;
+import fr.uga.miage.m1.requests.HttpRequest;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,8 +26,12 @@ public class Game {
     @Getter(AccessLevel.NONE)
     private int turnCount = 0;
     private int maxTurnCount;
+    @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    private SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
+    public SseEmitterPool poolPlayGame;
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    public SseEmitterPool poolWaitPlayer;
     private boolean allPlayerAreHere;
     @Getter(AccessLevel.NONE)
     private static final Logger LOGGER = Logger.getLogger(Game.class.getPackageName());
@@ -38,9 +42,8 @@ public class Game {
         this.player2 = player2;
         this.maxTurnCount = maxTurnCount;
         allPlayerAreHere = !(player1 == null || player2 == null);
-        sseEmitter.onCompletion(() -> LOGGER.info(() -> String.format("SSE emitter is completed. (gameId = %d)%n", id)));
-        sseEmitter.onTimeout(() -> LOGGER.warning(() -> String.format("SSE emitter timed out. (gameId = %d)%n", id)));
-        sseEmitter.onError(ex -> LOGGER.severe(() -> String.format("SSE emitter got an error (gameId = %d) : %s%n", id, ex)));
+        poolPlayGame = new SseEmitterPool();
+        poolWaitPlayer = new SseEmitterPool();
     }
 
     public int getId() {
@@ -159,18 +162,15 @@ public class Game {
             aiTakeTurn(otherPlayer);
         }
         humanTakeTurn(player, move);
-        if (canEndTurn()) sseEmitter.send(this);
+        if(canEndTurn()) poolPlayGame.sendAll(this);
         return this;
     }
 
     public synchronized Player addPlayer(String playerName) throws IOException {
         Player p = new Player(playerName, null);
         setPlayer(p);
-        if (areAllPlayersHere()) sseEmitter.send(this);
+        if (areAllPlayersHere()) poolWaitPlayer.sendAll(this);
+        HttpRequest.updateAllGames();
         return p;
-    }
-
-    public SseEmitter getSseEmitter() {
-        return sseEmitter;
     }
 }
