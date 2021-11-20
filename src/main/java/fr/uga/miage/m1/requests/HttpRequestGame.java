@@ -70,4 +70,10 @@ public class HttpRequestGame {
     ) throws IOException {
         return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).addPlayer(playerName));
     }
+
+
+    @GetMapping("{gameId}/player/{playerId}")
+    public ResponseEntity<Player> player(@PathVariable(name ="gameId") int gameId,@PathVariable(name = "playerId")int playerId){
+        return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).getPlayerWithId(playerId));
+    }
 }

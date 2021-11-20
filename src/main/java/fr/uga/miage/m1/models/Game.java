@@ -23,7 +23,6 @@ public class Game {
     private Player player1;
     private Player player2;
     private List<PlayerMove> moveHistory = new ArrayList<>();
-    @Getter(AccessLevel.NONE)
     private int turnCount = 0;
     private int maxTurnCount;
     @Setter(AccessLevel.NONE)
