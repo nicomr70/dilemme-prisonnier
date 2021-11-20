@@ -7,13 +7,13 @@ import lombok.Getter;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.EmptyStackException;
+import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
 
 @Getter
 public class Player {
     @Getter(AccessLevel.NONE)
-    static int playerCounter;
+    private static int playerCounter;
     private final int id;
     private IStrategy strategy;
     private PlayerChoice currentChoice = PlayerChoice.NONE;
@@ -21,7 +21,6 @@ public class Player {
     private final PlayerScore score = new PlayerScore();
     private final String name;
     private boolean canPlay;
-
 
     public Player(String name) {
         id = ++playerCounter;
@@ -56,11 +55,10 @@ public class Player {
 
     public PlayerChoice getLastChoice() {
         try {
-            return choicesHistory.peekLast();
-        } catch (EmptyStackException e){
-            e.printStackTrace();
+            return choicesHistory.getLast();
+        } catch (NoSuchElementException e){
+            return PlayerChoice.NONE;
         }
-        return PlayerChoice.NONE;
     }
 
     public boolean hasDefectedLastTurn() {
