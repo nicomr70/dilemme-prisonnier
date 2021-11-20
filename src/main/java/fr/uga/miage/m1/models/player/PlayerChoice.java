@@ -1,7 +1,5 @@
 package fr.uga.miage.m1.models.player;
 
-import fr.uga.miage.m1.models.SingleRandom;
-
 public enum PlayerChoice {
     DEFECT,
     COOPERATE,
@@ -9,7 +7,7 @@ public enum PlayerChoice {
 
     public final PlayerChoice getOpposite() {
         if (this == NONE) {
-            return SingleRandom.getInstance().nextBoolean() ? COOPERATE : DEFECT;
+            return NONE;
         }
         return this == COOPERATE ? DEFECT : COOPERATE;
     }
