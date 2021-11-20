@@ -11,7 +11,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -32,7 +31,6 @@ public class Game {
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     public SseEmitterPool poolWaitPlayer;
-    private boolean allPlayerAreHere;
     @Getter(AccessLevel.NONE)
     private static final Logger LOGGER = Logger.getLogger(Game.class.getPackageName());
 
@@ -41,7 +39,6 @@ public class Game {
         this.player1 = player1;
         this.player2 = player2;
         this.maxTurnCount = maxTurnCount;
-        allPlayerAreHere = !(player1 == null || player2 == null);
         poolPlayGame = new SseEmitterPool();
         poolWaitPlayer = new SseEmitterPool();
     }
@@ -113,24 +110,6 @@ public class Game {
         aiTakeTurn(player1);
         aiTakeTurn(player2);
         endTurn();
-    }
-
-    public void testLaunch() {
-        if (maxTurnCount > 0) {
-            try {
-                while (turnCount < maxTurnCount) {
-                    LOGGER.info(() -> String.format("<<< Tour %d >>>", turnCount + 1));
-                    testTurn();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        LOGGER.info(() -> String.format(
-                "SCORES :%n%s : %d ; %s : %d",
-                player1.getName(), player1.getScore(),
-                player2.getName(), player2.getScore()
-        ));
     }
 
     public void setPlayer(Player player) {

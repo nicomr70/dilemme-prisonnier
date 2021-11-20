@@ -1,13 +1,12 @@
 package fr.uga.miage.m1.requests;
 
-import fr.uga.miage.m1.models.game.Game;
 import fr.uga.miage.m1.RestServer;
+import fr.uga.miage.m1.models.game.Game;
 import fr.uga.miage.m1.utils.SseEmitterPool;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
 import java.util.Collection;
 
 

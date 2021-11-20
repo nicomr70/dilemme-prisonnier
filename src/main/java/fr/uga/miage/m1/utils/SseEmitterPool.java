@@ -13,7 +13,6 @@ public class SseEmitterPool{
     public int id = 0;
     @Getter(AccessLevel.NONE)
     private static final Logger LOGGER = Logger.getLogger(SseEmitterPool.class.getPackageName());
-
     @Getter
     private final List<SseEmitter> allGames = Collections.synchronizedList(new ArrayList<>());
 
@@ -23,7 +22,7 @@ public class SseEmitterPool{
         List<SseEmitter> deadSse = new ArrayList<>();
         allGames.forEach(value ->{
             try {
-                System.out.print(""+value+" "+object);
+                LOGGER.info(() -> String.format("%s -> %s", value.toString(), object.toString()));
                 value.send(object);
             } catch (IOException e) {
                 deadSse.add(value);
