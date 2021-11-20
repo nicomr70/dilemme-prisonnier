@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static java.util.Objects.*;
+
 @Getter
 @Setter
 public class Game {
@@ -23,7 +25,7 @@ public class Game {
     private Player player1;
     private Player player2;
     private List<PlayerMove> moveHistory = new ArrayList<>();
-    private int turnCount = 0;
+    private int turnCount;
     private int maxTurnCount;
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
@@ -34,13 +36,17 @@ public class Game {
     @Getter(AccessLevel.NONE)
     private static final Logger LOGGER = Logger.getLogger(Game.class.getPackageName());
 
-    public Game(Player player1, Player player2, int maxTurnCount) {
+    public Game(int maxTurnCount) {
         id = ++gameCounter;
-        this.player1 = player1;
-        this.player2 = player2;
         this.maxTurnCount = maxTurnCount;
         poolPlayGame = new SseEmitterPool();
         poolWaitPlayer = new SseEmitterPool();
+    }
+
+    public Game(int maxTurnCount, Player player1, Player player2) {
+        this(maxTurnCount);
+        this.player1 = player1;
+        this.player2 = player2;
     }
 
     public int getId() {
@@ -48,37 +54,32 @@ public class Game {
     }
 
     public void aiTakeTurn(Player aiPlayer) throws StrategyException {
-        Player otherPlayer = aiPlayer == player1 ? player2 : player1;
-        PlayerChoice choice = aiPlayer.strategyPlay(turnCount, otherPlayer);
-        PlayerMove move = new PlayerMove(player1, choice, turnCount);
-        moveHistory.add(move);
+        PlayerChoice choice = aiPlayer.strategyPlay(turnCount, getOpposingPlayer(aiPlayer));
+        updateMoveHistory(aiPlayer, choice);
         aiPlayer.disallowToPlay();
-        LOGGER.info(() ->
-                String.format("%s a %s.", aiPlayer.getName(), (choice == PlayerChoice.COOPERATE ? "coopéré" : "trahi"))
-        );
     }
 
     public synchronized void humanTakeTurn(Player humanPlayer, PlayerChoice choice) {
-        humanPlayer.manualPlay(choice);
-        PlayerMove move = new PlayerMove(player1, choice, turnCount);
-        moveHistory.add(move);
+        humanPlayer.play(choice);
+        updateMoveHistory(humanPlayer, choice);
         humanPlayer.disallowToPlay();
-        LOGGER.info(() ->
-                String.format("%s a %s.", humanPlayer.getName(), (choice == PlayerChoice.COOPERATE ? "coopéré" : "trahi"))
-        );
+    }
+
+    private void updateMoveHistory(Player player, PlayerChoice choice) {
+        moveHistory.add(new PlayerMove(player, choice, turnCount));
     }
 
     private void calculateTurnScore() {
         PlayerChoice player1Choice = player1.getCurrentChoice();
         PlayerChoice player2Choice = player2.getCurrentChoice();
 
-        if (player1Choice != PlayerChoice.NONE && player2Choice != PlayerChoice.NONE) {
+        if (!player1Choice.isNone() && !player2Choice.isNone()) {
             switch (player1Choice.ordinal() + player2Choice.ordinal()) {
                 case 0:
                     PlayerScore.applyBothDefected(player1, player2);
                     break;
                 case 1:
-                    if (player1Choice == PlayerChoice.DEFECT) {
+                    if (player1Choice.isDefect()) {
                         PlayerScore.applyOneDefectedOther(player1, player2);
                     } else {
                         PlayerScore.applyOneDefectedOther(player2, player1);
@@ -112,7 +113,7 @@ public class Game {
         endTurn();
     }
 
-    public void setPlayer(Player player) {
+    private void setPlayer(Player player) {
         if (player1 == null) {
             player1 = player;
         } else {
@@ -120,8 +121,14 @@ public class Game {
         }
     }
 
-    public boolean areAllPlayersHere() {
-        return player1 != null && player2 != null;
+    private Player getOpposingPlayer(Player player) {
+        if (player == player1) {
+            return player2;
+        }
+        if (player == player2) {
+            return player1;
+        }
+        return null;
     }
 
     public Player getPlayerWithId(int id) {
@@ -134,22 +141,30 @@ public class Game {
         return null;
     }
 
-    public synchronized Game playMove(int playerId, PlayerChoice move) throws StrategyException {
+    private boolean areAllPlayersHere() {
+        return player1 != null && player2 != null;
+    }
+
+    public synchronized Game takeTurn(int playerId, PlayerChoice choice) throws StrategyException {
         Player player = getPlayerWithId(playerId);
-        Player otherPlayer = player == player1 ? player1 : player2;
-        if (otherPlayer.getStrategy() != null) {
-            aiTakeTurn(otherPlayer);
+        Player opposingPlayer = getOpposingPlayer(player);
+        if (requireNonNull(opposingPlayer).hasStrategy()) {
+            aiTakeTurn(opposingPlayer);
         }
-        humanTakeTurn(player, move);
-        if(canEndTurn()) poolPlayGame.sendAll(this);
+        humanTakeTurn(player, choice);
+        if (canEndTurn()) {
+            endTurn();
+            poolPlayGame.sendAll(this);
+        }
         return this;
     }
 
-    public synchronized Player addPlayer(String playerName) {
-        Player p = new Player(playerName, null);
-        setPlayer(p);
-        if (areAllPlayersHere()) poolWaitPlayer.sendAll(this);
+    public synchronized Player addPlayer(Player player) {
+        setPlayer(player);
+        if (areAllPlayersHere()) {
+            poolWaitPlayer.sendAll(this);
+        }
         HttpRequest.updateAllGames();
-        return p;
+        return player;
     }
 }

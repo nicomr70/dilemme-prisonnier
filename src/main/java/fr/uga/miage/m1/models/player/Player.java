@@ -36,21 +36,24 @@ public class Player {
     public PlayerChoice strategyPlay(int turnCount, Player otherPlayer) throws StrategyException {
         if (strategy != null) {
             PlayerChoice choice = strategy.execute(turnCount, this, otherPlayer);
-            currentChoice = choice;
-            canPlay = false;
+            play(choice);
             return choice;
         } else {
             throw new StrategyException("strategy not found");
         }
     }
 
-    public void manualPlay(PlayerChoice choice) {
+    public void play(PlayerChoice choice) {
         currentChoice = choice;
         canPlay = false;
     }
 
     public void setStrategy(IStrategy strategy) {
         this.strategy = strategy;
+    }
+
+    public boolean hasStrategy() {
+        return strategy != null;
     }
 
     public PlayerChoice getLastChoice() {

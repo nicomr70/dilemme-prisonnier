@@ -31,7 +31,7 @@ public class HttpRequestGame {
             @PathVariable(name = "playerId") int playerId,
             @PathVariable(name = "move") PlayerChoice move
     ) throws StrategyException {
-        return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).playMove(playerId, move));
+        return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).takeTurn(playerId, move));
     }
 
     @GetMapping("/allStrategies")
@@ -65,14 +65,18 @@ public class HttpRequestGame {
     @PutMapping("join/gameId={gameId}/playerName={playerName}")
     public ResponseEntity<Player> joinGame(
             @PathVariable("gameId") int gameId,
-            @PathVariable("playerName")String playerName
+            @PathVariable("playerName") String playerName
     ) {
-        return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).addPlayer(playerName));
+        Player newPlayer = new Player(playerName);
+        return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).addPlayer(newPlayer));
     }
 
 
     @GetMapping("{gameId}/player/{playerId}")
-    public ResponseEntity<Player> player(@PathVariable(name ="gameId") int gameId,@PathVariable(name = "playerId")int playerId){
+    public ResponseEntity<Player> player(
+            @PathVariable(name ="gameId") int gameId,
+            @PathVariable(name = "playerId")int playerId
+    ) {
         return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).getPlayerWithId(playerId));
     }
 }

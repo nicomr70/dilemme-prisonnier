@@ -14,5 +14,7 @@ public class GamePool {
         return games.get(gameId);
     }
 
-    public Collection<Game> getGamesCollection() {return games.values();}
+    public Collection<Game> asCollection() {
+        return games.values();
+    }
 }

@@ -51,6 +51,14 @@ class PlayerTest {
             player.increaseScore(5);
             assertEquals(previousScore, player.getPreviousScore());
         }
+
+        @Test
+        @DisplayName("'hasStrategy' should return whether the player's strategy is set or not")
+        void hasStrategyShouldReturnWhetherThePlayersStrategyIsSetOrNot() {
+            assertTrue(player.hasStrategy());
+            player.setStrategy(null);
+            assertFalse(player.hasStrategy());
+        }
     }
 
     @Nested
@@ -85,7 +93,7 @@ class PlayerTest {
     class ManualPlayMethod {
         @BeforeEach
         void manualPlay() {
-            player.manualPlay(PlayerChoice.DEFECT);
+            player.play(PlayerChoice.DEFECT);
         }
 
         @Test
@@ -138,7 +146,7 @@ class PlayerTest {
         @Test
         @DisplayName("should return player's last choice")
         void shouldReturnPlayersLastChoice() {
-            player.manualPlay(PlayerChoice.COOPERATE);
+            player.play(PlayerChoice.COOPERATE);
             player.updateChoicesHistory();
             assertEquals(PlayerChoice.COOPERATE, player.getLastChoice());
         }
@@ -149,11 +157,11 @@ class PlayerTest {
     class GetChoiceCountMethod {
         @BeforeEach
         void simulateGame() {
-            player.manualPlay(PlayerChoice.COOPERATE);
+            player.play(PlayerChoice.COOPERATE);
             player.updateChoicesHistory();
-            player.manualPlay(PlayerChoice.DEFECT);
+            player.play(PlayerChoice.DEFECT);
             player.updateChoicesHistory();
-            player.manualPlay(PlayerChoice.COOPERATE);
+            player.play(PlayerChoice.COOPERATE);
             player.updateChoicesHistory();
         }
 
@@ -182,7 +190,7 @@ class PlayerTest {
         @Test
         @DisplayName("should return true when last choice is COOPERATE")
         void shouldReturnTrueWhenLastChoiceIsCooperate() {
-            player.manualPlay(PlayerChoice.COOPERATE);
+            player.play(PlayerChoice.COOPERATE);
             player.updateChoicesHistory();
             assertTrue(player.hasCooperatedLastTurn());
         }
@@ -190,7 +198,7 @@ class PlayerTest {
         @Test
         @DisplayName("should return false when last choice is DEFECT")
         void shouldReturnFalseWhenLastChoiceIsDefect() {
-            player.manualPlay(PlayerChoice.DEFECT);
+            player.play(PlayerChoice.DEFECT);
             player.updateChoicesHistory();
             assertFalse(player.hasCooperatedLastTurn());
         }
@@ -202,7 +210,7 @@ class PlayerTest {
         @Test
         @DisplayName("should return true when last choice is DEFECT")
         void shouldReturnTrueWhenLastChoiceIsDefect() {
-            player.manualPlay(PlayerChoice.DEFECT);
+            player.play(PlayerChoice.DEFECT);
             player.updateChoicesHistory();
             assertTrue(player.hasDefectedLastTurn());
         }
@@ -210,7 +218,7 @@ class PlayerTest {
         @Test
         @DisplayName("should return false when last choice is COOPERATE")
         void shouldReturnFalseWhenLastChoiceIsCooperate() {
-            player.manualPlay(PlayerChoice.COOPERATE);
+            player.play(PlayerChoice.COOPERATE);
             player.updateChoicesHistory();
             assertFalse(player.hasDefectedLastTurn());
         }

@@ -9,18 +9,14 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class SseEmitterPool{
-    @Getter
-    public int id = 0;
     @Getter(AccessLevel.NONE)
     private static final Logger LOGGER = Logger.getLogger(SseEmitterPool.class.getPackageName());
     @Getter
     private final List<SseEmitter> allGames = Collections.synchronizedList(new ArrayList<>());
 
-
-
-    public void sendAll(Object object){
+    public void sendAll(Object object) {
         List<SseEmitter> deadSse = new ArrayList<>();
-        allGames.forEach(value ->{
+        allGames.forEach(value -> {
             try {
                 LOGGER.info(() -> String.format("%s -> %s", value.toString(), object.toString()));
                 value.send(object);
@@ -40,7 +36,7 @@ public class SseEmitterPool{
             allGames.remove(sse);
             sse.complete();
         });
-        sse.onError(ex ->{
+        sse.onError(ex -> {
             LOGGER.severe(() -> String.format("SSE emitter of %s got an error : %s%n", role, ex));
             allGames.remove(sse);
             sse.complete();

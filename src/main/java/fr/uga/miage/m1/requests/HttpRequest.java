@@ -25,7 +25,7 @@ public class HttpRequest {
     //ici permet de creer une partie
     @PutMapping("createGame/maxTurnCount={maxTurnCount}")
     public ResponseEntity<Boolean> gameFactory(@PathVariable(name = "maxTurnCount") int maxTurnCount) {
-        Game g = new Game(null, null, maxTurnCount);
+        Game g = new Game(maxTurnCount);
         RestServer.getGamePool().registerGame(g);
         updateAllGames();
         return ResponseEntity.ok(true);
@@ -33,11 +33,11 @@ public class HttpRequest {
 
     @GetMapping("initialState")
     public ResponseEntity<Collection<Game>> send(){
-        return ResponseEntity.ok(RestServer.getGamePool().getGamesCollection());
+        return ResponseEntity.ok(RestServer.getGamePool().asCollection());
     }
 
     public static void updateAllGames() {
-        poolAllGames.sendAll(RestServer.getGamePool().getGamesCollection());
+        poolAllGames.sendAll(RestServer.getGamePool().asCollection());
     }
 
 
