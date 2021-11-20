@@ -1,4 +1,4 @@
-package fr.uga.miage.m1.models;
+package fr.uga.miage.m1.models.game;
 
 import fr.uga.miage.m1.exceptions.StrategyException;
 import fr.uga.miage.m1.models.player.Player;
@@ -6,6 +6,7 @@ import fr.uga.miage.m1.models.player.PlayerChoice;
 import fr.uga.miage.m1.models.player.PlayerMove;
 import fr.uga.miage.m1.models.player.PlayerScore;
 import fr.uga.miage.m1.requests.HttpRequest;
+import fr.uga.miage.m1.utils.SseEmitterPool;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -154,7 +155,7 @@ public class Game {
         return null;
     }
 
-    public synchronized Game playMove(int playerId, PlayerChoice move) throws StrategyException, IOException {
+    public synchronized Game playMove(int playerId, PlayerChoice move) throws StrategyException {
         Player player = getPlayerWithId(playerId);
         Player otherPlayer = player == player1 ? player1 : player2;
         if (otherPlayer.getStrategy() != null) {
@@ -165,7 +166,7 @@ public class Game {
         return this;
     }
 
-    public synchronized Player addPlayer(String playerName) throws IOException {
+    public synchronized Player addPlayer(String playerName) {
         Player p = new Player(playerName, null);
         setPlayer(p);
         if (areAllPlayersHere()) poolWaitPlayer.sendAll(this);

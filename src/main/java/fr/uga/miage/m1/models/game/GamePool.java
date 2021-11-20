@@ -1,4 +1,4 @@
-package fr.uga.miage.m1.models;
+package fr.uga.miage.m1.models.game;
 
 import java.util.*;
 

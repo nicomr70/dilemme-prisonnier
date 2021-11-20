@@ -1,5 +1,6 @@
-package fr.uga.miage.m1.models;
+package fr.uga.miage.m1.utils;
 
+import fr.uga.miage.m1.utils.SingleRandom;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

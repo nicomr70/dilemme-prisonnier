@@ -2,7 +2,7 @@ package fr.uga.miage.m1.requests;
 
 import fr.uga.miage.m1.RestServer;
 import fr.uga.miage.m1.exceptions.StrategyException;
-import fr.uga.miage.m1.models.Game;
+import fr.uga.miage.m1.models.game.Game;
 import fr.uga.miage.m1.models.player.Player;
 import fr.uga.miage.m1.models.player.PlayerChoice;
 import fr.uga.miage.m1.models.strategy.StrategyType;
@@ -31,7 +31,7 @@ public class HttpRequestGame {
             @PathVariable(name = "gameId") int gameId,
             @PathVariable(name = "playerId") int playerId,
             @PathVariable(name = "move") PlayerChoice move
-    ) throws StrategyException, IOException {
+    ) throws StrategyException {
         return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).playMove(playerId, move));
     }
 
@@ -67,7 +67,7 @@ public class HttpRequestGame {
     public ResponseEntity<Player> joinGame(
             @PathVariable("gameId") int gameId,
             @PathVariable("playerName")String playerName
-    ) throws IOException {
+    ) {
         return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).addPlayer(playerName));
     }
 
