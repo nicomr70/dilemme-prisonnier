@@ -18,11 +18,11 @@ public class SseEmitterPool{
         List<SseEmitter> deadSseEmitters = new ArrayList<>();
         pool.forEach(sseEmitter -> {
             try {
-                LOGGER.info(() -> String.format("%s -> %s", sseEmitter.toString(), data.toString()));
+                LOGGER.info(() -> String.format("%s -> %s%n", sseEmitter.toString(), data.toString()));
                 sseEmitter.send(data);
             } catch (IOException e) {
+                LOGGER.warning(() -> String.format("Emitter link was broken...%n%s%n)", e));
                 deadSseEmitters.add(sseEmitter);
-                e.printStackTrace();
             }
         });
         pool.removeAll(deadSseEmitters);
