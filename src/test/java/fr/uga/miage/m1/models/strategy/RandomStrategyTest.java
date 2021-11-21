@@ -24,9 +24,7 @@ class RandomStrategyTest extends StrategyTest {
         PlayerChoice mainChoice = PlayerChoice.COOPERATE;
 
         @BeforeEach
-        void prepareStrategy()
-                throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException
-        {
+        void prepareStrategy() throws StrategyException {
             randomStrategy = (RandomStrategy) StrategyFactory.getStrategyFromType(StrategyType.RANDOM);
         }
 
@@ -58,9 +56,7 @@ class RandomStrategyTest extends StrategyTest {
 
     @Test
     @DisplayName("should cooperate or defect evenly")
-    void shouldCooperateOrDefectEvenly()
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException
-    {
+    void shouldCooperateOrDefectEvenly() throws StrategyException {
         randomStrategy = (RandomStrategy) StrategyFactory.getStrategyFromType(StrategyType.RANDOM);
         PlayerChoice resultChoice = randomStrategy.execute(3, mock(Player.class), mock(Player.class));
         assertTrue(resultChoice.isCooperate() || resultChoice.isDefect());

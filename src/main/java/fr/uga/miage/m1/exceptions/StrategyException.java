@@ -4,4 +4,8 @@ public class StrategyException extends Exception {
     public StrategyException(String message) {
         super(message);
     }
+
+    public StrategyException(String message, Throwable throwable) {
+        super(message, throwable);
+    }
 }

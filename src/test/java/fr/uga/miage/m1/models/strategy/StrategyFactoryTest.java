@@ -1,5 +1,6 @@
 package fr.uga.miage.m1.models.strategy;
 
+import fr.uga.miage.m1.exceptions.StrategyException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -11,18 +12,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class StrategyFactoryTest {
     @Test
     @DisplayName("should provide the 'random' strategy when type is null")
-    void shouldProvideTheRandomStrategyWhenTypeIsNull()
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException
-    {
+    void shouldProvideTheRandomStrategyWhenTypeIsNull() throws StrategyException {
         IStrategy strategy = StrategyFactory.getStrategyFromType(null);
         assertEquals(RandomStrategy.class, strategy.getClass());
     }
 
     @Test
     @DisplayName("should provide a strategy according to the input type")
-    void shouldProvideAStrategyAccordingToTheInputType()
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException
-    {
+    void shouldProvideAStrategyAccordingToTheInputType() throws StrategyException {
         for (StrategyType type : StrategyType.values()) {
             IStrategy strategy = StrategyFactory.getStrategyFromType(type);
             assertEquals(type.getStrategyClass(), strategy.getClass());

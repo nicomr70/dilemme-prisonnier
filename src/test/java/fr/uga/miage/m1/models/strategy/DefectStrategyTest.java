@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayName("The 'Defect' strategy")
 class DefectStrategyTest extends StrategyTest {
     @BeforeEach
-    void prepareGame() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    void prepareGame() throws StrategyException {
         initAiPlayers(StrategyType.DEFECT, StrategyType.RANDOM);
         game = new Game(DEFAULT_MAX_TURN_COUNT, player1, player2);
     }

@@ -5,24 +5,18 @@ import fr.uga.miage.m1.models.game.Game;
 import fr.uga.miage.m1.models.player.Player;
 import fr.uga.miage.m1.models.player.PlayerChoice;
 
-import java.lang.reflect.InvocationTargetException;
-
 abstract class StrategyTest {
     Player player1, player2;
     Game game;
 
     final static int DEFAULT_MAX_TURN_COUNT = 100;
 
-    void initAiPlayers(StrategyType player1StrategyType, StrategyType player2StrategyType)
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException
-    {
+    void initAiPlayers(StrategyType player1StrategyType, StrategyType player2StrategyType) throws StrategyException {
         player1 = new Player("player1", StrategyFactory.getStrategyFromType(player1StrategyType));
         player2 = new Player("player2", StrategyFactory.getStrategyFromType(player2StrategyType));
     }
 
-    void initMixedPlayers(StrategyType aiPlayerStrategy)
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException
-    {
+    void initMixedPlayers(StrategyType aiPlayerStrategy) throws StrategyException {
         initAiPlayers(aiPlayerStrategy, null);
     }
 

@@ -14,9 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("The 'Tit for Tat' strategy")
 class TitForTatStrategyTest extends StrategyTest {
     @BeforeEach
-    void initGame()
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException
-    {
+    void initGame() throws StrategyException {
         initAiPlayers(StrategyType.TIT_FOR_TAT, StrategyType.RANDOM);
         game = new Game(DEFAULT_MAX_TURN_COUNT, player1, player2);
     }
