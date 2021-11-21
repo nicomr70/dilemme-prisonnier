@@ -14,7 +14,7 @@ class RandomStrategy implements IStrategy {
 
     public final PlayerChoice chooseRandomly(PlayerChoice defaultChoice, double oppositeChoiceProbability) {
         PlayerChoice oppositeChoice = defaultChoice.getOpposite();
-        if (oppositeChoiceProbability <= 0.0 || oppositeChoiceProbability > 1.0) {
+        if (oppositeChoiceProbability < 0.0 || oppositeChoiceProbability > 1.0) {
             oppositeChoiceProbability = OPPOSITE_CHOICE_DEFAULT_PROBABILITY;
         }
         if (random.nextDouble() < oppositeChoiceProbability) {
