@@ -5,6 +5,8 @@ import fr.uga.miage.m1.models.game.Game;
 import fr.uga.miage.m1.models.player.Player;
 import fr.uga.miage.m1.models.player.PlayerChoice;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 abstract class StrategyTest {
     Player player1, player2;
     Game game;
@@ -55,5 +57,9 @@ abstract class StrategyTest {
             manualTurn(humanPlayerChoice);
             count--;
         }
+    }
+
+    void assertWasLastPlayed(Player player, PlayerChoice choice) {
+        assertEquals(choice, player.getLastChoice());
     }
 }
