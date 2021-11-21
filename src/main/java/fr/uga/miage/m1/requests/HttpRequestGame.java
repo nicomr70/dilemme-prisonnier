@@ -22,7 +22,7 @@ public class HttpRequestGame {
                 .getGamePool()
                 .getGame(gameId)
                 .poolPlayGame
-                .sseEmitterFactory("wait player play (gameId ="+gameId+")");
+                .newEmitter("wait player play (gameId ="+gameId+")");
     }
 
     @PutMapping("/play/gameId={gameId}/playerId={playerId}/move={move}")
@@ -52,7 +52,7 @@ public class HttpRequestGame {
                 .getGamePool()
                 .getGame(gameId)
                 .poolWaitPlayer
-                .sseEmitterFactory("wait player (gameId="+gameId+")");
+                .newEmitter("wait player (gameId="+gameId+")");
     }
 
     @GetMapping("initialState/gameId={gameId}")
@@ -67,8 +67,8 @@ public class HttpRequestGame {
             @PathVariable("gameId") int gameId,
             @PathVariable("playerName") String playerName
     ) {
-        Player newPlayer = new Player(playerName);
-        return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).addPlayer(newPlayer));
+        Player joiningPlayer = new Player(playerName);
+        return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).addPlayer(joiningPlayer));
     }
 
 

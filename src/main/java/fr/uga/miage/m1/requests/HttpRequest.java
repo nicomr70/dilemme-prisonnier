@@ -19,7 +19,7 @@ public class HttpRequest {
     //ici pour recup toutes les parties creer et non rempli
     @GetMapping("allGames")//ok
     public SseEmitter allGames(){
-        return poolAllGames.sseEmitterFactory("AllGames");
+        return poolAllGames.newEmitter("AllGames");
     }
 
     //ici permet de creer une partie

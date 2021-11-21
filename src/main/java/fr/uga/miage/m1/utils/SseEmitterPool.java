@@ -12,37 +12,39 @@ public class SseEmitterPool{
     @Getter(AccessLevel.NONE)
     private static final Logger LOGGER = Logger.getLogger(SseEmitterPool.class.getPackageName());
     @Getter
-    private final List<SseEmitter> allGames = Collections.synchronizedList(new ArrayList<>());
+    private final List<SseEmitter> pool = Collections.synchronizedList(new ArrayList<>());
 
-    public void sendAll(Object object) {
-        List<SseEmitter> deadSse = new ArrayList<>();
-        allGames.forEach(value -> {
+    public void sendAll(Object data) {
+        List<SseEmitter> deadSseEmitters = new ArrayList<>();
+        pool.forEach(sseEmitter -> {
             try {
-                LOGGER.info(() -> String.format("%s -> %s", value.toString(), object.toString()));
-                value.send(object);
+                LOGGER.info(() -> String.format("%s -> %s", sseEmitter.toString(), data.toString()));
+                sseEmitter.send(data);
             } catch (IOException e) {
-                deadSse.add(value);
+                deadSseEmitters.add(sseEmitter);
                 e.printStackTrace();
             }
         });
-        allGames.removeAll(deadSse);
+        pool.removeAll(deadSseEmitters);
     }
 
-    public SseEmitter sseEmitterFactory(String role){
-        SseEmitter sse = new SseEmitter(Long.MAX_VALUE);
-        sse.onCompletion(() -> LOGGER.info(() -> String.format("SSE emitter of %s is completed. %n", role)));
-        sse.onTimeout(() -> {
-            LOGGER.warning(() -> String.format("SSE emitter of %s timed out%n", role));
-            allGames.remove(sse);
-            sse.complete();
+    public SseEmitter newEmitter(String role){
+        SseEmitter newSseEmitter = new SseEmitter(Long.MAX_VALUE);
+        newSseEmitter.onCompletion(() ->
+                LOGGER.info(() -> String.format("SSE emitter of '%s' is completed. %n", role))
+        );
+        newSseEmitter.onTimeout(() -> {
+            LOGGER.warning(() -> String.format("SSE emitter of '%s' timed out%n", role));
+            pool.remove(newSseEmitter);
+            newSseEmitter.complete();
         });
-        sse.onError(ex -> {
-            LOGGER.severe(() -> String.format("SSE emitter of %s got an error : %s%n", role, ex));
-            allGames.remove(sse);
-            sse.complete();
+        newSseEmitter.onError(ex -> {
+            LOGGER.severe(() -> String.format("SSE emitter of '%s' got an error : %s%n", role, ex));
+            pool.remove(newSseEmitter);
+            newSseEmitter.complete();
         });
-        allGames.add(sse);
-        return sse;
+        pool.add(newSseEmitter);
+        return newSseEmitter;
     }
 
 }
