@@ -14,7 +14,6 @@ class CooperateStrategyTest extends StrategyTest {
     @BeforeEach
     void prepareGame() throws StrategyException {
         initGameWithAiPlayers(StrategyType.COOPERATE, StrategyType.RANDOM);
-        game = new Game(DEFAULT_MAX_TURN_COUNT, player1, player2);
     }
 
     @Test

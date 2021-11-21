@@ -14,7 +14,6 @@ class SuspiciousTitForTatStrategyTest extends StrategyTest {
     @BeforeEach
     void initGame() throws StrategyException {
         initGameWithAiPlayers(StrategyType.SUSPICIOUS_TIT_FOR_TAT, StrategyType.RANDOM);
-        game = new Game(DEFAULT_MAX_TURN_COUNT, player1, player2);
     }
 
     @Test
