@@ -3,6 +3,7 @@ package fr.uga.miage.m1.models.strategy;
 import fr.uga.miage.m1.exceptions.StrategyException;
 import fr.uga.miage.m1.models.game.Game;
 import fr.uga.miage.m1.models.player.Player;
+import fr.uga.miage.m1.models.player.PlayerChoice;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -19,6 +20,12 @@ abstract class StrategyTest {
         player2 = new Player("player2", StrategyFactory.getStrategyFromType(player2StrategyType));
     }
 
+    void initMixedPlayers(StrategyType aiPlayerStrategy)
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException
+    {
+        initAiPlayers(aiPlayerStrategy, null);
+    }
+
     void turn() throws StrategyException {
         game.setTurnCount(game.getTurnCount() + 1);
         game.aiTakeTurn(player1);
@@ -26,9 +33,22 @@ abstract class StrategyTest {
         game.endTurn();
     }
 
+    void manualTurn(PlayerChoice humanPlayerChoice) throws StrategyException {
+        game.setTurnCount(game.getTurnCount() + 1);
+        game.aiTakeTurn(player1);
+        game.humanTakeTurn(player2, humanPlayerChoice);
+    }
+
     void iterateTurn(int count) throws StrategyException {
         while (count > 0 && game.getTurnCount() < game.getMaxTurnCount()) {
             turn();
+            count--;
+        }
+    }
+
+    void iterateManualTurn(int count, PlayerChoice humanPlayerChoice) throws StrategyException {
+        while (count > 0 && game.getTurnCount() < game.getMaxTurnCount()) {
+            manualTurn(humanPlayerChoice);
             count--;
         }
     }
