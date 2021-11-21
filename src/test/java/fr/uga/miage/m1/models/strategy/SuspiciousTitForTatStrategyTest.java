@@ -7,14 +7,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.InvocationTargetException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class SuspiciousTitForTatStrategyTest extends StrategyTest {
     @BeforeEach
     void initGame() throws StrategyException {
-        initAiPlayers(StrategyType.SUSPICIOUS_TIT_FOR_TAT, StrategyType.RANDOM);
+        initGameWithAiPlayers(StrategyType.SUSPICIOUS_TIT_FOR_TAT, StrategyType.RANDOM);
         game = new Game(DEFAULT_MAX_TURN_COUNT, player1, player2);
     }
 

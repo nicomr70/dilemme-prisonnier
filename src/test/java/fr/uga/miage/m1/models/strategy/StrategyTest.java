@@ -11,13 +11,22 @@ abstract class StrategyTest {
 
     final static int DEFAULT_MAX_TURN_COUNT = 100;
 
-    void initAiPlayers(StrategyType player1StrategyType, StrategyType player2StrategyType) throws StrategyException {
+    Game initGameWithAiPlayers(int maxTurnCount, StrategyType player1StrategyType, StrategyType player2StrategyType) throws StrategyException {
         player1 = new Player("player1", StrategyFactory.getStrategyFromType(player1StrategyType));
         player2 = new Player("player2", StrategyFactory.getStrategyFromType(player2StrategyType));
+        return game = new Game(maxTurnCount, player1, player2);
     }
 
-    void initMixedPlayers(StrategyType aiPlayerStrategy) throws StrategyException {
-        initAiPlayers(aiPlayerStrategy, null);
+    Game initGameWithAiPlayers(StrategyType player1StrategyType, StrategyType player2StrategyType) throws StrategyException {
+        return initGameWithAiPlayers(DEFAULT_MAX_TURN_COUNT, player1StrategyType, player2StrategyType);
+    }
+
+    Game initGameWithMixedPlayers(int maxTurnCount, StrategyType aiPlayerStrategy) throws StrategyException {
+        return initGameWithAiPlayers(maxTurnCount, aiPlayerStrategy, null);
+    }
+
+    Game initGameWithMixedPlayers(StrategyType aiPlayerStrategy) throws StrategyException {
+        return initGameWithMixedPlayers(DEFAULT_MAX_TURN_COUNT, aiPlayerStrategy);
     }
 
     void turn() throws StrategyException {
@@ -31,6 +40,7 @@ abstract class StrategyTest {
         game.setTurnCount(game.getTurnCount() + 1);
         game.aiTakeTurn(player1);
         game.humanTakeTurn(player2, humanPlayerChoice);
+        game.endTurn();
     }
 
     void iterateTurn(int count) throws StrategyException {
