@@ -16,6 +16,7 @@ import java.util.Arrays;
 @RestController
 @RequestMapping("/game")
 public class HttpRequestGame {
+
     @GetMapping("/waitPlayerPlay/gameId={gameId}")
     public SseEmitter waitPlayerPlay(@PathVariable(name = "gameId")int gameId) {
         return RestServer
