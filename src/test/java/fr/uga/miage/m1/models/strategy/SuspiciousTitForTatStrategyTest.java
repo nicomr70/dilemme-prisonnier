@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("The 'Suspicious Tit for Tat' strategy")
 class SuspiciousTitForTatStrategyTest extends StrategyTest {
     @BeforeEach
     void initGame() throws StrategyException {
