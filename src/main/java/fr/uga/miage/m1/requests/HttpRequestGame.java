@@ -32,6 +32,7 @@ public class HttpRequestGame {
             @PathVariable(name = "playerId") int playerId,
             @PathVariable(name = "move") PlayerChoice move
     ) throws StrategyException {
+        System.out.println("game id : "+ gameId + " playerId : "+playerId+ " move : "+move);
         return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).takeTurn(playerId, move));
     }
 

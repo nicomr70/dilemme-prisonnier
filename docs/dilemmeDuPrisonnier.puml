@@ -1,0 +1,232 @@
+@startuml
+'https://plantuml.com/class-diagram
+package models{
+package models.game {
+    class Game{
+        -{static} int gameCounter;
+        - int id;
+        - Player player1;
+        - Player player2;
+        - List<PlayerMove> moveHistory
+        - int turnCount;
+        - final int maxTurnCount;
+        + SseEmitterPool poolPlayGame;
+        + SseEmitterPool poolWaitPlayer;
+        +Game(int maxTurnCount)
+        +Game(int maxTurnCount, Player player1, Player player2)
+        +void aiTakeTurn(Player aiPlayer) : void
+        +humanTakeTurn(Player humanPlayer, PlayerChoice choice) :void
+        -updateMoveHistory(Player player, PlayerChoice choice) :void
+        + canEndTurn() : boolean
+        +endTurn() : void
+        +getOpposingPlayer(Player player):Player
+        +getPlayerById(int id):Player
+        +areAllPlayersHere():boolean
+        +takeTurn(int playerId, PlayerChoice choice):void
+        +addPlayer(Player player):player
+    }
+
+    class GamePool{
+    - Map<Integer, Game> : games
+    +registerGame(Game game):void
+    +getGame(int gameId) : Game
+    +asCollection() : Collection<Game>
+    }
+}
+package models.player{
+    class Player{
+        - {{static}} int playerCounter;
+        - final int id;
+        - IStrategy strategy;
+        - PlayerChoice currentChoice
+        - final Deque<PlayerChoice> choicesHistory
+        - final PlayerScore score
+        - final String name;
+        - boolean canPlay;
+         + Player(String name)
+            + Player(String name, IStrategy strategy)
+            + PlayerChoice strategyPlay(int turnCount, Player otherPlayer)
+            + void play(PlayerChoice choice)
+            + void setStrategy(IStrategy strategy)
+            + boolean hasStrategy()
+            + PlayerChoice getLastChoice()
+            + boolean hasDefectedLastTurn()
+            + boolean hasCooperatedLastTurn()
+            + void updateChoicesHistory()
+            + int getScore()
+            + int getPreviousScore()
+            + void increaseScore(int earnedPoints)
+            + int getId()
+            + String getName()
+            + boolean canPlay()
+            + void allowToPlay()
+            + void disallowToPlay()
+            + int getChoiceCount(PlayerChoice playerChoice)
+
+    }
+
+    enum PlayerChoice{
+        DEFECT
+        COOPERATE
+        NONE
+        + final PlayerChoice getOpposite()
+            + final boolean isDefect()
+            + final boolean isCooperate()
+            + final boolean isNone()
+            + final boolean is(PlayerChoice choice)
+    }
+
+    class PlayerMove{
+     - final Player player;
+        - final PlayerChoice choice;
+        - final int turnNumber;
+        +PlayerMove(Player player, PlayerChoice choice, int turnNumber)
+    }
+
+    class PlayerScore {
+        - int currentValue;
+        - int previousValue;
+
+        + {static} final int SCORE_DEFECTED = 0;
+        + {static} final int SCORE_DEFECT_ONE = 5;
+        + {static} final int SCORE_DEFECT_BOTH = 1;
+        + {static} final int SCORE_COOPERATE = 3;
+
+        + int getCurrentValue()
+        + int getPreviousValue()
+        + void addToValue(int valueToAdd)
+        + void reset()
+        + Cooperated(Player player1, Player player2)
+        + {static} void applyOneDefectedOther(Player player1, Player player2)
+        + {static} void applyBothDefected(Player player1, Player player2)
+        + {static} void applyCooperated(Player player1, Player player2)
+    }
+}
+
+package models.strategy{
+
+    interface IStrategy{
+    ~PlayerChoice execute(int turnCount, Player player, Player otherPlayer);
+    }
+
+    CooperateStrategy <|-- IStrategy
+    DefectStrategy <|-- IStrategy
+    GenerousTitForTatStrategy<|-- RandomStrategy
+    GradualStrategy<|-- IStrategy
+    GrimTriggerStrategy <|-- IStrategy
+    NaiveProberStrategy <|-- RandomStrategy
+    PavlovStrategy <|-- IStrategy
+    RandomPavlovStrategy<|-- RandomStrategy
+    RandomStrategy<|-- IStrategy
+    RandomTitForTatStrategy<|-- RandomStrategy
+    SoftGrudgerStrategy <|-- IStrategy
+    SuspiciousTitForTatStrategy<|-- IStrategy
+    TitForTatStrategy<|-- IStrategy
+
+    enum StrategyType{
+
+        COOPERATE
+        ~DEFECT
+        RANDOM
+        TIT_FOR_TAT
+        SUSPICIOUS_TIT_FOR_TAT
+        RANDOM_TIT_FOR_TAT
+        GENEROUS_TIT_FOR_TAT
+        NAIVE_PROBER
+        GRIM_TRIGGER
+        SOFT_GRUDGER
+        GRADUAL
+        PAVLOV
+        RANDOM_PAVLOV
+
+        - final String name;
+        - final Class<? extends IStrategy> strategyClass;
+
+        ~StrategyType(String name, Class<? extends IStrategy> strategyClass)
+        + String getName()
+        + Class<? extends IStrategy> getStrategyClass()
+    }
+
+    class StrategyFactory {
+        - StrategyFactory()
+        + {static} IStrategy getStrategyFromType(StrategyType strategyType)
+    }
+}
+}
+
+package requests{
+
+    class HttpRequest {
+        + SseEmitter allGames()
+        + ResponseEntity<Boolean> gameFactory(@PathVariable(name = "maxTurnCount") int maxTurnCount)
+        + ResponseEntity<Collection<Game>> send()
+        + {static} void updateAllGames()
+   }
+
+    class HttpRequestGame {
+        + SseEmitter waitPlayerPlay(@PathVariable(name = "gameId")int gameId)
+        + synchronized ResponseEntity<Game> playMove(
+                @PathVariable(name = "gameId") int gameId,
+                @PathVariable(name = "playerId") int playerId,
+                @PathVariable(name = "move") PlayerChoice move
+        )
+        + ResponseEntity<Object[]> allStrategies()
+        + ResponseEntity<PlayerChoice[]> allMoves()
+        + SseEmitter waitLastPlayer(
+                @PathVariable(name = "gameId") int gameId
+        )
+        + ResponseEntity<Game> gameInitialState(
+                @PathVariable(name = "gameId") int gameId
+        )
+        + ResponseEntity<Player> joinGame(
+                @PathVariable("gameId") int gameId,
+                @PathVariable("playerName") String playerName
+        )
+        + ResponseEntity<Player> player(
+        @PathVariable(name ="gameId") int gameId,
+        @PathVariable(name = "playerId")int playerId)
+    }
+}
+
+package utils{
+    class SingleRandom {
+        - {static} SingleRandom instance;
+
+        - SingleRandom()
+
+        + {static} SingleRandom getInstance()
+
+    }
+
+    class SseEmitterPool{
+        - {{static}}Logger LOGGER
+        - List<SseEmitter> pool
+
+        +void sendAll(Object data)
+
+        +SseEmitter newEmitter(String role)
+
+    }
+
+}
+
+package java.utils {
+class Random
+}
+
+SingleRandom <|-- Random
+class RestServer{
+    - {static} final GamePool gamePool
+    + {static} void main(String[] args)
+}
+
+
+Game "*" -- "2" Player : participe
+Player "1" -- "1" IStrategy : APourStrategie
+Player "1" -- "1" PlayerChoice : CurrentChoice
+Player "1" -- "*" PlayerChoice : ChoicesHistory
+Player "1" -- "1" PlayerScore : aPourScore
+GamePool "1" -- "*" Game : faitPartieDe
+
+
+@enduml

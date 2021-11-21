@@ -1,0 +1,58 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+Actor Client1
+Actor Client2
+participant poolAllGames as SseEmiteur
+note right of poolAllGames : SseEmiteur
+group parallele
+    Client1 -> Serveur : Allgames()
+    Serveur --> Client1 : SseEmiteur
+    Client1 <-Client1 : abonnement au SseEmiteur
+    Client1 -> Serveur : joinGame()
+    Serveur -> Serveur :  p :new Player()
+    Serveur -> Game : addPalyer
+    note left of Client1 : attente du second joueur
+    Client2 -> Serveur :  Allgames()
+    Serveur --> Client2 : SseEmiteur
+    Client2 <-Client2 : abonnement au SseEmiteur
+    Client2 -> Serveur : joinGame()
+    Serveur -> Serveur : p : new Player()
+    Serveur -> Game : addPlayer()
+    Game -> poolAllGames : updateAllGames()
+    note right poolAllGames : envoie le message avec le game \nsi et seulement si tout les joueurs sont arrivés
+end
+poolAllGames-->Client1 : Send game
+poolAllGames --> Client2 : Send game
+note left of Client1 : le joueur est debloquer
+group En parallele sur les coups
+        alt setStrategy for Client1
+            Client1 ->  Serveur : setStrategy(Strategy)
+            Serveur -> Game : setStrategy(player)
+            note left of Client1 : il ne joue plus et peut quitter la partie de son coté
+            loop partie non fini
+            Client2 -> Serveur : play(move)
+            Serveur -> Game : HumanTakeTurn(move)
+            Game -> Game : IATakeTurn(move)
+            Game -> poolGame : update()
+            poolGame --> Client2  : game
+            end
+        else aucune strategie mise en place
+        loop  partie non fini
+            Client1 -> Serveur : play(move)
+            Serveur ->Game : HumanTakeTurn(move)
+            note left of Client1 : Le joueur 1 est mise en attente du joueur 2 \npour jouer sont prochain coup
+            Client2 -> Serveur : play(move)
+            Serveur ->Game : HumanTakeTurn(move)
+            Game --> poolGame : update
+            poolGame --> Client1 : game
+            poolGame --> Client2 : game
+            note left of Client1 : joueur debloquer
+        end
+        end
+end
+
+
+
+@enduml
