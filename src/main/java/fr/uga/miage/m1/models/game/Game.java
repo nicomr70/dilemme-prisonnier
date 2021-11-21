@@ -20,13 +20,15 @@ import static java.util.Objects.*;
 @Getter
 @Setter
 public class Game {
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private static int gameCounter;
     private int id;
     private Player player1;
     private Player player2;
     private List<PlayerMove> moveHistory = new ArrayList<>();
     private int turnCount;
-    private int maxTurnCount;
+    private final int maxTurnCount;
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     public SseEmitterPool poolPlayGame;
@@ -113,7 +115,7 @@ public class Game {
         endTurn();
     }
 
-    private void setPlayer(Player player) {
+    public void setPlayer(Player player) {
         if (player1 == null) {
             player1 = player;
         } else {
@@ -121,7 +123,7 @@ public class Game {
         }
     }
 
-    private Player getOpposingPlayer(Player player) {
+    public Player getOpposingPlayer(Player player) {
         if (player == player1) {
             return player2;
         }
@@ -131,7 +133,7 @@ public class Game {
         return null;
     }
 
-    public Player getPlayerWithId(int id) {
+    public Player getPlayerById(int id) {
         if (player1.getId() == id) {
             return player1;
         }
@@ -141,12 +143,12 @@ public class Game {
         return null;
     }
 
-    private boolean areAllPlayersHere() {
+    public boolean areAllPlayersHere() {
         return player1 != null && player2 != null;
     }
 
     public synchronized Game takeTurn(int playerId, PlayerChoice choice) throws StrategyException {
-        Player player = getPlayerWithId(playerId);
+        Player player = getPlayerById(playerId);
         Player opposingPlayer = getOpposingPlayer(player);
         if (requireNonNull(opposingPlayer).hasStrategy()) {
             aiTakeTurn(opposingPlayer);

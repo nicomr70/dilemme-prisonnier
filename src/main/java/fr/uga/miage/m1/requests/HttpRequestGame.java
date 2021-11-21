@@ -77,6 +77,6 @@ public class HttpRequestGame {
             @PathVariable(name ="gameId") int gameId,
             @PathVariable(name = "playerId")int playerId
     ) {
-        return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).getPlayerWithId(playerId));
+        return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).getPlayerById(playerId));
     }
 }
