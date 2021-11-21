@@ -108,13 +108,6 @@ public class Game {
         player2.allowToPlay();
     }
 
-    public void testTurn() throws StrategyException {
-        turnCount++;
-        aiTakeTurn(player1);
-        aiTakeTurn(player2);
-        endTurn();
-    }
-
     public void setPlayer(Player player) {
         if (player1 == null) {
             player1 = player;
