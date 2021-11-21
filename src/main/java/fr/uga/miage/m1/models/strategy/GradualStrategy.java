@@ -17,9 +17,10 @@ final class GradualStrategy implements IStrategy {
         resetPunishmentIterator();
     }
 
-    private void calculatePunishment(int otherPlayerDefectCount) {
+    private void calculatePunishment(Player opposingPlayer) {
+        int opposingPlayerDefectCount = opposingPlayer.getChoiceCount(PlayerChoice.DEFECT);
         List<PlayerChoice> punishmentEnd = List.of(PlayerChoice.COOPERATE, PlayerChoice.COOPERATE);
-        punishment = new ArrayList<>(Collections.nCopies(otherPlayerDefectCount, PlayerChoice.DEFECT));
+        punishment = new ArrayList<>(Collections.nCopies(opposingPlayerDefectCount, PlayerChoice.DEFECT));
         punishment.addAll(punishmentEnd);
     }
 
@@ -28,15 +29,15 @@ final class GradualStrategy implements IStrategy {
     }
 
     @Override
-    public PlayerChoice execute(int turnCount, Player player, Player otherPlayer) {
+    public PlayerChoice execute(int turnCount, Player player, Player opposingPlayer) {
         if (allowPunishment && punishmentIterator.hasNext()) {
             return punishmentIterator.next();
         } else {
             if (!punishmentIterator.hasNext()) {
                 allowPunishment = false;
             }
-            if (turnCount != 1 && otherPlayer.hasDefectedLastTurn()) {
-                calculatePunishment(otherPlayer.getChoiceCount(PlayerChoice.DEFECT));
+            if (turnCount != 1 && opposingPlayer.hasDefectedLastTurn()) {
+                calculatePunishment(opposingPlayer);
                 resetPunishmentIterator();
                 allowPunishment = true;
                 return punishmentIterator.next();

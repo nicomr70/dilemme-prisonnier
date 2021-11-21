@@ -36,6 +36,7 @@ abstract class StrategyTest {
         game.aiTakeTurn(player1);
         game.aiTakeTurn(player2);
         game.endTurn();
+        System.out.println("Tour "+game.getTurnCount()+" | P1 : "+player1.getLastChoice()+" ; P2 : "+player2.getLastChoice());
     }
 
     void manualTurn(PlayerChoice humanPlayerChoice) throws StrategyException {
@@ -43,6 +44,7 @@ abstract class StrategyTest {
         game.aiTakeTurn(player1);
         game.humanTakeTurn(player2, humanPlayerChoice);
         game.endTurn();
+        System.out.println("Tour "+game.getTurnCount()+" | P1 : "+player1.getLastChoice()+" ; P2 : "+player2.getLastChoice());
     }
 
     void iterateTurn(int count) throws StrategyException {
