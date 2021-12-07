@@ -13,7 +13,6 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import static java.util.Objects.*;
 
@@ -35,8 +34,6 @@ public class Game {
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     public SseEmitterPool poolWaitPlayer;
-    @Getter(AccessLevel.NONE)
-    private static final Logger LOGGER = Logger.getLogger(Game.class.getPackageName());
 
     public Game(int maxTurnCount) {
         id = ++gameCounter;

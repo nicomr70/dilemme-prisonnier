@@ -6,6 +6,7 @@ import fr.uga.miage.m1.models.game.Game;
 import fr.uga.miage.m1.models.player.Player;
 import fr.uga.miage.m1.models.player.PlayerChoice;
 import fr.uga.miage.m1.models.strategy.StrategyType;
+import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -15,6 +16,7 @@ import java.util.Arrays;
 @CrossOrigin
 @RestController
 @RequestMapping("/game")
+@Log
 public class HttpRequestGame {
 
     @GetMapping("/waitPlayerPlay/gameId={gameId}")
@@ -32,7 +34,7 @@ public class HttpRequestGame {
             @PathVariable(name = "playerId") int playerId,
             @PathVariable(name = "move") PlayerChoice move
     ) throws StrategyException {
-        System.out.println("game id : "+ gameId + " playerId : "+playerId+ " move : "+move);
+        log.info("game id : "+ gameId + " playerId : "+playerId+ " move : "+move);
         return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).takeTurn(playerId, move));
     }
 

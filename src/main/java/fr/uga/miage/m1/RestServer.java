@@ -9,7 +9,6 @@ public class RestServer {
     @Getter
     private static final GamePool gamePool = new GamePool();
 
-
     public static void main(String[] args){
         SpringApplication.run(RestServer.class, args);
     }
