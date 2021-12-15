@@ -1,20 +1,31 @@
 package fr.uga.miage.m1.models.strategy;
 
-import fr.uga.miage.m1.models.player.Player;
-import fr.uga.miage.m1.models.player.PlayerChoice;
+import fr.uga.miage.m1.sharedstrategy.RandomStrategy;
+import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
+import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 
 /** Stratégie Pavlov aléatoire */
 final class RandomPavlovStrategy extends RandomStrategy {
     @Override
-    public PlayerChoice execute(int turnCount, Player player, Player otherPlayer) {
-        if (turnCount == 1) {
-            return PlayerChoice.COOPERATE;
+    public String getUniqueId() {
+        return "RANDOM_PAVLOV";
+    }
+
+    @Override
+    public String getFullName() {
+        return "Pavlov aléatoire";
+    }
+
+    @Override
+    public StrategyChoice execute(StrategyExecutionData data) {
+        if (data.getGameCurrentTurnCount() == 1) {
+            return StrategyChoice.COOPERATE;
         }
-        int scoreDiff = player.getScore() - player.getPreviousScore();
+        int scoreDiff = data.getMainPlayerScore() - data.getMainPlayerPreviousScore();
         if (scoreDiff == 5 || scoreDiff == 3) {
-            return chooseRandomly(player.getLastChoice());
+            return chooseRandomly(data.getMainPlayerLastChoice());
         } else {
-            return player.hasDefectedLastTurn() ? PlayerChoice.COOPERATE : PlayerChoice.DEFECT;
+            return data.hasMainPlayerDefectedLastTurn() ? StrategyChoice.COOPERATE : StrategyChoice.DEFECT;
         }
     }
 }

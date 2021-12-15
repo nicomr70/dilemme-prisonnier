@@ -1,5 +1,6 @@
 package fr.uga.miage.m1.models.player;
 
+import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("A player move")
 class PlayerMoveTest {
     final Player player = new Player("player", null);
-    final PlayerChoice choice = PlayerChoice.COOPERATE;
+    final StrategyChoice choice = StrategyChoice.COOPERATE;
     final int turnNumber = 42;
     PlayerMove move = new PlayerMove(player, choice, turnNumber);
 

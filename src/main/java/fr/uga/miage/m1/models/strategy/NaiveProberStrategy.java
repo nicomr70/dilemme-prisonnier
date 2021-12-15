@@ -1,16 +1,27 @@
 package fr.uga.miage.m1.models.strategy;
 
-import fr.uga.miage.m1.models.player.Player;
-import fr.uga.miage.m1.models.player.PlayerChoice;
+import fr.uga.miage.m1.sharedstrategy.RandomStrategy;
+import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
+import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 
 /** Stratégie Sondeur naïf */
 final class NaiveProberStrategy extends RandomStrategy {
     @Override
-    public PlayerChoice execute(int turnCount, Player player, Player otherPlayer) {
-        if (turnCount == 1) {
-            return PlayerChoice.COOPERATE;
+    public String getUniqueId() {
+        return "NAIVE_PROBER";
+    }
+
+    @Override
+    public String getFullName() {
+        return "Sondeur naïf";
+    }
+
+    @Override
+    public StrategyChoice execute(StrategyExecutionData data) {
+        if (data.getGameCurrentTurnCount() == 1) {
+            return StrategyChoice.COOPERATE;
         } else {
-            return otherPlayer.hasCooperatedLastTurn() ? chooseRandomly(PlayerChoice.COOPERATE) : PlayerChoice.DEFECT;
+            return data.hasOpposingPlayerCooperatedLastTurn() ? chooseRandomly(StrategyChoice.COOPERATE) : StrategyChoice.DEFECT;
         }
     }
 }
