@@ -2,9 +2,10 @@ package fr.uga.miage.m1.models.game;
 
 import fr.uga.miage.m1.exceptions.StrategyException;
 import fr.uga.miage.m1.models.player.Player;
-import fr.uga.miage.m1.models.player.PlayerChoice;
 import fr.uga.miage.m1.models.player.PlayerScore;
-import fr.uga.miage.m1.models.strategy.IStrategy;
+import fr.uga.miage.m1.sharedstrategy.IStrategy;
+import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
+import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 import fr.uga.miage.m1.utils.SseEmitterPool;
 import org.junit.jupiter.api.*;
 
@@ -26,7 +27,7 @@ class GameTest {
         game.setPlayer2(player2 = mock(Player.class));
     }
 
-    private void simulateTurn(PlayerChoice player1Choice, PlayerChoice player2Choice) {
+    private void simulateTurn(StrategyChoice player1Choice, StrategyChoice player2Choice) {
         game.humanTakeTurn(player1, player1Choice);
         game.humanTakeTurn(player2, player2Choice);
         game.endTurn();
@@ -59,7 +60,7 @@ class GameTest {
         @Test
         @DisplayName("should grant 1 point to each player if they both defected")
         void shouldGrant1PointToEachPlayerIfTheyBothDefected() {
-            simulateTurn(PlayerChoice.DEFECT, PlayerChoice.DEFECT);
+            simulateTurn(StrategyChoice.DEFECT, StrategyChoice.DEFECT);
             expectedScores = calculateExpectedScores(
                     PlayerScore.SCORE_DEFECT_BOTH,
                     PlayerScore.SCORE_DEFECT_BOTH
@@ -69,7 +70,7 @@ class GameTest {
         @Test
         @DisplayName("should grant 3 points to each player if they both cooperated")
         void shouldGrant3PointsToEachPlayerIfTheyBothCooperated() {
-            simulateTurn(PlayerChoice.COOPERATE, PlayerChoice.COOPERATE);
+            simulateTurn(StrategyChoice.COOPERATE, StrategyChoice.COOPERATE);
             expectedScores = calculateExpectedScores(
                     PlayerScore.SCORE_COOPERATE,
                     PlayerScore.SCORE_COOPERATE
@@ -79,7 +80,7 @@ class GameTest {
         @Test
         @DisplayName("should grant 5 resp. 0 point(s) to the player who defected resp. cooperated")
         void shouldGrant5Resp0PointsToThePlayerWhoDefectedRespCooperated() {
-            simulateTurn(PlayerChoice.DEFECT, PlayerChoice.COOPERATE);
+            simulateTurn(StrategyChoice.DEFECT, StrategyChoice.COOPERATE);
             expectedScores = calculateExpectedScores(
                     PlayerScore.SCORE_DEFECT_ONE,
                     PlayerScore.SCORE_DEFECTED
@@ -89,7 +90,7 @@ class GameTest {
         @Test
         @DisplayName("should grant 0 resp. 5 point(s) to the player who defected resp. cooperated")
         void shouldGrant0Resp5PointsToThePlayerWhoCooperatedRespDefected() {
-            simulateTurn(PlayerChoice.COOPERATE, PlayerChoice.DEFECT);
+            simulateTurn(StrategyChoice.COOPERATE, StrategyChoice.DEFECT);
             expectedScores = calculateExpectedScores(
                     PlayerScore.SCORE_DEFECTED,
                     PlayerScore.SCORE_DEFECT_ONE
@@ -98,22 +99,22 @@ class GameTest {
 
         @Test
         @DisplayName("should not update scores when first player choice is NONE")
-        void shouldNotUpdateScoreWhenFirstPlayerChoiceIsNone() {
-            simulateTurn(PlayerChoice.NONE, PlayerChoice.COOPERATE);
+        void shouldNotUpdateScoreWhenFirstStrategyChoiceIsNone() {
+            simulateTurn(StrategyChoice.NONE, StrategyChoice.COOPERATE);
             expectedScores = calculateExpectedScores(0, 0);
         }
 
         @Test
         @DisplayName("should not update scores when second player choice is NONE")
-        void shouldNotUpdateScoreWhenSecondPlayerChoiceIsNone() {
-            simulateTurn(PlayerChoice.DEFECT, PlayerChoice.NONE);
+        void shouldNotUpdateScoreWhenSecondStrategyChoiceIsNone() {
+            simulateTurn(StrategyChoice.DEFECT, StrategyChoice.NONE);
             expectedScores = calculateExpectedScores(0, 0);
         }
 
         @Test
         @DisplayName("should not update scores when both players choice is NONE")
         void shouldNotUpdateScoreWhenBothPlayersChoiceIsNone() {
-            simulateTurn(PlayerChoice.NONE, PlayerChoice.NONE);
+            simulateTurn(StrategyChoice.NONE, StrategyChoice.NONE);
             expectedScores = calculateExpectedScores(0, 0);
         }
 
@@ -284,7 +285,7 @@ class GameTest {
     @Nested
     @DisplayName("'takeTurn' method")
     class TakeTurnMethod {
-        private void mockPlayersCurrentChoice(PlayerChoice player1Choice, PlayerChoice player2Choice) {
+        private void mockPlayersCurrentChoice(StrategyChoice player1Choice, StrategyChoice player2Choice) {
             when(player1.getCurrentChoice()).thenReturn(player1Choice);
             when(player2.getCurrentChoice()).thenReturn(player2Choice);
         }
@@ -293,8 +294,8 @@ class GameTest {
         @DisplayName("should make current player play")
         void shouldMakeCurrentPlayerPlay() throws StrategyException {
             setMockPlayers();
-            PlayerChoice player1Choice = PlayerChoice.COOPERATE;
-            mockPlayersCurrentChoice(player1Choice, PlayerChoice.DEFECT);
+            StrategyChoice player1Choice = StrategyChoice.COOPERATE;
+            mockPlayersCurrentChoice(player1Choice, StrategyChoice.DEFECT);
             game.takeTurn(player1.getId(), player1Choice);
             verify(player1).play(player1Choice);
         }
@@ -304,20 +305,28 @@ class GameTest {
         void shouldMakeOpposingPlayerPlayIfItsAnAi() throws StrategyException {
             game.setTurnCount(4);
             setHumanPlayers();
-            PlayerChoice player1Choice = PlayerChoice.COOPERATE;
+            StrategyChoice player1Choice = StrategyChoice.COOPERATE;
             IStrategy player2Strategy = mock(IStrategy.class);
-            when(player2Strategy.execute(game.getTurnCount(), player2, player1)).thenReturn(PlayerChoice.DEFECT);
+            StrategyExecutionData strategyExecutionData = new StrategyExecutionData()
+                    .setGameCurrentTurnCount(game.getTurnCount())
+                    .setMainPlayerScore(player2.getScore())
+                    .setMainPlayerPreviousScore(player2.getPreviousScore())
+                    .setMainPlayerChoicesHistory(player2.getChoicesHistory())
+                    .setOpposingPlayerScore(player1.getScore())
+                    .setOpposingPlayerPreviousScore(player1.getPreviousScore())
+                    .setOpposingPlayerChoicesHistory(player1.getChoicesHistory());
+            when(player2Strategy.execute(strategyExecutionData)).thenReturn(StrategyChoice.DEFECT);
             player2.setStrategy(player2Strategy);
             game.takeTurn(player1.getId(), player1Choice);
-            verify(player2Strategy).execute(game.getTurnCount(), player2, player1);
+            verify(player2Strategy).execute(strategyExecutionData);
         }
 
         @Test
         @DisplayName("should return the game instance to be sent")
         void shouldReturnTheGameInstanceToBeSent() throws StrategyException {
             setMockPlayers();
-            PlayerChoice player1Choice = PlayerChoice.COOPERATE;
-            mockPlayersCurrentChoice(player1Choice, PlayerChoice.DEFECT);
+            StrategyChoice player1Choice = StrategyChoice.COOPERATE;
+            mockPlayersCurrentChoice(player1Choice, StrategyChoice.DEFECT);
             assertEquals(game, game.takeTurn(player1.getId(), player1Choice));
         }
 
@@ -325,8 +334,8 @@ class GameTest {
         @DisplayName("should send game to client when turn ends")
         void shouldSendGameToClientWhenTurnEnds() throws StrategyException {
             setMockPlayers();
-            PlayerChoice player1Choice = PlayerChoice.COOPERATE;
-            mockPlayersCurrentChoice(player1Choice, PlayerChoice.DEFECT);
+            StrategyChoice player1Choice = StrategyChoice.COOPERATE;
+            mockPlayersCurrentChoice(player1Choice, StrategyChoice.DEFECT);
             game.poolPlayGame = mock(SseEmitterPool.class);
             game.takeTurn(player1.getId(), player1Choice);
             assertTrue(game.canEndTurn());

@@ -23,6 +23,13 @@
     <sonar.host.url>http://im2ag-sonar.u-ga.fr:9000</sonar.host.url>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -116,6 +123,16 @@
       <artifactId>junit-jupiter-api</artifactId>
       <version>5.8.1</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.Lxsvn98</groupId>
+      <artifactId>prisoners-dilemma-shared-strategy</artifactId>
+      <version>1.0.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>0.10.2</version>
     </dependency>
   </dependencies>
 

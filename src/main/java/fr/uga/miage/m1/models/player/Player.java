@@ -1,7 +1,9 @@
 package fr.uga.miage.m1.models.player;
 
 import fr.uga.miage.m1.exceptions.StrategyException;
-import fr.uga.miage.m1.models.strategy.IStrategy;
+import fr.uga.miage.m1.sharedstrategy.IStrategy;
+import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
+import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 import lombok.AccessLevel;
 import lombok.Getter;
 
@@ -16,8 +18,8 @@ public class Player {
     private static int playerCounter;
     private final int id;
     private IStrategy strategy;
-    private PlayerChoice currentChoice = PlayerChoice.NONE;
-    private final Deque<PlayerChoice> choicesHistory = new ArrayDeque<>();
+    private StrategyChoice currentChoice = StrategyChoice.NONE;
+    private final Deque<StrategyChoice> choicesHistory = new ArrayDeque<>();
     private final PlayerScore score = new PlayerScore();
     private final String name;
     private boolean canPlay;
@@ -33,9 +35,9 @@ public class Player {
         this.strategy = strategy;
     }
 
-    public PlayerChoice strategyPlay(int turnCount, Player otherPlayer) throws StrategyException {
+    public StrategyChoice strategyPlay(StrategyExecutionData executionData) throws StrategyException {
         if (strategy != null) {
-            PlayerChoice choice = strategy.execute(turnCount, this, otherPlayer);
+            StrategyChoice choice = strategy.execute(executionData);
             play(choice);
             return choice;
         } else {
@@ -43,7 +45,7 @@ public class Player {
         }
     }
 
-    public void play(PlayerChoice choice) {
+    public void play(StrategyChoice choice) {
         currentChoice = choice;
         canPlay = false;
     }
@@ -56,11 +58,11 @@ public class Player {
         return strategy != null;
     }
 
-    public PlayerChoice getLastChoice() {
+    public StrategyChoice getLastChoice() {
         try {
             return choicesHistory.getLast();
         } catch (NoSuchElementException e){
-            return PlayerChoice.NONE;
+            return StrategyChoice.NONE;
         }
     }
 
@@ -108,8 +110,8 @@ public class Player {
         canPlay = false;
     }
 
-    public int getChoiceCount(PlayerChoice playerChoice) {
-        BiFunction<Integer, PlayerChoice, Integer> countDefectReducer =
+    public int getChoiceCount(StrategyChoice playerChoice) {
+        BiFunction<Integer, StrategyChoice, Integer> countDefectReducer =
                 (counter, choice) -> counter + (choice == playerChoice ? 1 : 0);
         return choicesHistory.stream().reduce(0, countDefectReducer, Integer::sum);
     }

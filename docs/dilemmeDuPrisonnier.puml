@@ -15,14 +15,14 @@ package models.game {
         +Game(int maxTurnCount)
         +Game(int maxTurnCount, Player player1, Player player2)
         +void aiTakeTurn(Player aiPlayer) : void
-        +humanTakeTurn(Player humanPlayer, PlayerChoice choice) :void
-        -updateMoveHistory(Player player, PlayerChoice choice) :void
+        +humanTakeTurn(Player humanPlayer, StrategyChoice choice) :void
+        -updateMoveHistory(Player player, StrategyChoice choice) :void
         + canEndTurn() : boolean
         +endTurn() : void
         +getOpposingPlayer(Player player):Player
         +getPlayerById(int id):Player
         +areAllPlayersHere():boolean
-        +takeTurn(int playerId, PlayerChoice choice):void
+        +takeTurn(int playerId, StrategyChoice choice):void
         +addPlayer(Player player):player
     }
 
@@ -38,18 +38,18 @@ package models.player{
         - {{static}} int playerCounter;
         - final int id;
         - IStrategy strategy;
-        - PlayerChoice currentChoice
-        - final Deque<PlayerChoice> choicesHistory
+        - StrategyChoice currentChoice
+        - final Deque<StrategyChoice> choicesHistory
         - final PlayerScore score
         - final String name;
         - boolean canPlay;
          + Player(String name)
             + Player(String name, IStrategy strategy)
-            + PlayerChoice strategyPlay(int turnCount, Player otherPlayer)
-            + void play(PlayerChoice choice)
+            + StrategyChoice strategyPlay(int turnCount, Player otherPlayer)
+            + void play(StrategyChoice choice)
             + void setStrategy(IStrategy strategy)
             + boolean hasStrategy()
-            + PlayerChoice getLastChoice()
+            + StrategyChoice getLastChoice()
             + boolean hasDefectedLastTurn()
             + boolean hasCooperatedLastTurn()
             + void updateChoicesHistory()
@@ -61,26 +61,26 @@ package models.player{
             + boolean canPlay()
             + void allowToPlay()
             + void disallowToPlay()
-            + int getChoiceCount(PlayerChoice playerChoice)
+            + int getChoiceCount(StrategyChoice playerChoice)
 
     }
 
-    enum PlayerChoice{
+    enum StrategyChoice{
         DEFECT
         COOPERATE
         NONE
-        + final PlayerChoice getOpposite()
+        + final StrategyChoice getOpposite()
             + final boolean isDefect()
             + final boolean isCooperate()
             + final boolean isNone()
-            + final boolean is(PlayerChoice choice)
+            + final boolean is(StrategyChoice choice)
     }
 
     class PlayerMove{
      - final Player player;
-        - final PlayerChoice choice;
+        - final StrategyChoice choice;
         - final int turnNumber;
-        +PlayerMove(Player player, PlayerChoice choice, int turnNumber)
+        +PlayerMove(Player player, StrategyChoice choice, int turnNumber)
     }
 
     class PlayerScore {
@@ -106,7 +106,7 @@ package models.player{
 package models.strategy{
 
     interface IStrategy{
-    ~PlayerChoice execute(int turnCount, Player player, Player otherPlayer);
+    ~StrategyChoice execute(int turnCount, Player player, Player otherPlayer);
     }
 
     CooperateStrategy <|-- IStrategy
@@ -168,10 +168,10 @@ package requests{
         + synchronized ResponseEntity<Game> playMove(
                 @PathVariable(name = "gameId") int gameId,
                 @PathVariable(name = "playerId") int playerId,
-                @PathVariable(name = "move") PlayerChoice move
+                @PathVariable(name = "move") StrategyChoice move
         )
         + ResponseEntity<Object[]> allStrategies()
-        + ResponseEntity<PlayerChoice[]> allMoves()
+        + ResponseEntity<StrategyChoice[]> allMoves()
         + SseEmitter waitLastPlayer(
                 @PathVariable(name = "gameId") int gameId
         )
@@ -223,8 +223,8 @@ class RestServer{
 
 Game "*" -- "2" Player : participe
 Player "1" -- "1" IStrategy : APourStrategie
-Player "1" -- "1" PlayerChoice : CurrentChoice
-Player "1" -- "*" PlayerChoice : ChoicesHistory
+Player "1" -- "1" StrategyChoice : CurrentChoice
+Player "1" -- "*" StrategyChoice : ChoicesHistory
 Player "1" -- "1" PlayerScore : aPourScore
 GamePool "1" -- "*" Game : faitPartieDe
 
