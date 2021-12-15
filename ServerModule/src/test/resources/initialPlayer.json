@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "strategy": null,
+  "currentChoice": "NONE",
+  "choicesHistory": [],
+  "score": 0,
+  "name": "Nicolas",
+  "canPlay": true,
+  "previousScore": 0,
+  "lastChoice": "NONE"
+}
