@@ -5,7 +5,7 @@ import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
 import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 
 /** Stratégie Pavlov */
-final class PavlovStrategy implements IStrategy {
+public final class PavlovStrategy implements IStrategy {
     @Override
     public String getUniqueId() {
         return "PAVLOV";

@@ -6,7 +6,6 @@ import fr.uga.miage.m1.sharedstrategy.RandomStrategy;
 import lombok.extern.java.Log;
 import org.reflections.Reflections;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,18 +15,12 @@ public final class StrategyFactory {
             new Reflections("fr.uga.miage.m1")
                     .getSubTypesOf(IStrategy.class);
 
-    public static final Map<String, Class<? extends IStrategy>> STRATEGIES = new HashMap<>();
+    public static final Map<String, Class<? extends IStrategy>> STRATEGIES_MAP = getStrategiesMap();
 
-    private StrategyFactory() throws StrategyException {
-        for (Class<? extends IStrategy> strategyClass : STRATEGIES_SET) {
-            try {
-                IStrategy strategy = strategyClass.getDeclaredConstructor().newInstance();
-                STRATEGIES.put(strategy.getUniqueId(), strategy.getClass());
-            } catch (Exception e) {
-                throw new StrategyException("could not initialize", e);
-            }
-        }
+    private StrategyFactory() {}
 
+    private static Map<String, Class<? extends IStrategy>> getStrategiesMap() {
+        return null;
     }
 
     public static IStrategy getStrategyFromType(String strategyId) throws StrategyException {
@@ -35,7 +28,7 @@ public final class StrategyFactory {
             return new RandomStrategy();
         }
         try {
-            return STRATEGIES.get(strategyId).getDeclaredConstructor().newInstance();
+            return STRATEGIES_MAP.get(strategyId).getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new StrategyException("could not be generated from type " + strategyId, e);
         }

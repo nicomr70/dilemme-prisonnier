@@ -7,14 +7,14 @@ import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 import java.util.*;
 
 /** Stratégie Gradual */
-final class GradualStrategy implements IStrategy {
+public final class GradualStrategy implements IStrategy {
     private boolean allowPunishment;
 
     private List<StrategyChoice> punishment = new ArrayList<>();
 
     private Iterator<StrategyChoice> punishmentIterator;
 
-    GradualStrategy() {
+    public GradualStrategy() {
         resetPunishmentIterator();
     }
 

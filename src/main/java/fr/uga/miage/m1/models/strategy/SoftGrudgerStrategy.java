@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /** Stratégie Rancunier */
-final class SoftGrudgerStrategy implements IStrategy {
+public final class SoftGrudgerStrategy implements IStrategy {
     private boolean allowPunishment;
 
     private final List<StrategyChoice> punishment = List.of(
@@ -26,13 +26,13 @@ final class SoftGrudgerStrategy implements IStrategy {
         punishmentIterator = punishment.stream().iterator();
     }
 
-    SoftGrudgerStrategy() {
+    public SoftGrudgerStrategy() {
         resetPunishmentIterator();
     }
 
     @Override
     public String getUniqueId() {
-        return "SOF_GRUDGER";
+        return "SOFT_GRUDGER";
     }
 
     @Override

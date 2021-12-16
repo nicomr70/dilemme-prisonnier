@@ -5,7 +5,7 @@ import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
 import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 
 /** Stratégie Donnant-donnant */
-final class TitForTatStrategy implements IStrategy {
+public final class TitForTatStrategy implements IStrategy {
     @Override
     public String getUniqueId() {
         return "TIT_FOR_TAT";

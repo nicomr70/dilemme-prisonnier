@@ -4,9 +4,8 @@ import fr.uga.miage.m1.RestServer;
 import fr.uga.miage.m1.exceptions.StrategyException;
 import fr.uga.miage.m1.models.game.Game;
 import fr.uga.miage.m1.models.player.Player;
-import fr.uga.miage.m1.models.player.PlayerChoice;
-import fr.uga.miage.m1.models.strategy.StrategyType;
 import lombok.extern.java.Log;
+import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -32,7 +31,7 @@ public class HttpRequestGame {
     public synchronized ResponseEntity<Game> playMove(
             @PathVariable(name = "gameId") int gameId,
             @PathVariable(name = "playerId") int playerId,
-            @PathVariable(name = "move") PlayerChoice move
+            @PathVariable(name = "move") StrategyChoice move
     ) throws StrategyException {
         log.info("game id : "+ gameId + " playerId : "+playerId+ " move : "+move);
         return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).takeTurn(playerId, move));
@@ -40,12 +39,13 @@ public class HttpRequestGame {
 
     @GetMapping("/allStrategies")
     public ResponseEntity<Object[]> allStrategies(){
-        return ResponseEntity.ok(Arrays.stream(StrategyType.values()).map(StrategyType::getName).toArray());
+       // TODO: return ResponseEntity.ok(Arrays.stream(StrategyType.values()).map(StrategyType::getName).toArray());
+        return ResponseEntity.ok(new Object[]{});
     }
 
     @GetMapping("/allMoves")
-    public ResponseEntity<PlayerChoice[]> allMoves(){
-        return ResponseEntity.ok(PlayerChoice.values());
+    public ResponseEntity<StrategyChoice[]> allMoves(){
+        return ResponseEntity.ok(StrategyChoice.values());
     }
 
     @GetMapping("waitLastPlayer/gameId={gameId}")

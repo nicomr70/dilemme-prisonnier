@@ -5,7 +5,7 @@ import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
 import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 
 /** Stratégie Sondeur naïf */
-final class NaiveProberStrategy extends RandomStrategy {
+public final class NaiveProberStrategy extends RandomStrategy {
     @Override
     public String getUniqueId() {
         return "NAIVE_PROBER";

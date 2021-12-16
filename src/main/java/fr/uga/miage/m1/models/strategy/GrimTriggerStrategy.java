@@ -5,7 +5,7 @@ import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
 import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 
 /** Stratégie Rancunier */
-final class GrimTriggerStrategy implements IStrategy {
+public final class GrimTriggerStrategy implements IStrategy {
     private boolean allowDefect;
 
     @Override

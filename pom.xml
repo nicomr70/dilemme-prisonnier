@@ -127,7 +127,7 @@
     <dependency>
       <groupId>com.github.Lxsvn98</groupId>
       <artifactId>prisoners-dilemma-shared-strategy</artifactId>
-      <version>1.0.5</version>
+      <version>7c34565bd9</version>
     </dependency>
     <dependency>
       <groupId>org.reflections</groupId>

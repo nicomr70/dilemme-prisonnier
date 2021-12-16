@@ -5,7 +5,7 @@ import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
 import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 
 /** Stratégie Pavlov aléatoire */
-final class RandomPavlovStrategy extends RandomStrategy {
+public final class RandomPavlovStrategy extends RandomStrategy {
     @Override
     public String getUniqueId() {
         return "RANDOM_PAVLOV";

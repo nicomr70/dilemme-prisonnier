@@ -5,7 +5,7 @@ import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
 import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 
 /** Stratégie Donnant-donnant soupçonneux */
-final class SuspiciousTitForTatStrategy implements IStrategy {
+public final class SuspiciousTitForTatStrategy implements IStrategy {
     @Override
     public String getUniqueId() {
         return "SUSPICIOUS_TIT_FOR_TAT";
