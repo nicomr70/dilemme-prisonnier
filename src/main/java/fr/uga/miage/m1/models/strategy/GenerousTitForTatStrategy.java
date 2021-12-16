@@ -1,16 +1,27 @@
 package fr.uga.miage.m1.models.strategy;
 
-import fr.uga.miage.m1.models.player.Player;
-import fr.uga.miage.m1.models.player.PlayerChoice;
+import fr.uga.miage.m1.sharedstrategy.RandomStrategy;
+import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
+import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 
 /** Stratégie Donnant-donnant */
 final class GenerousTitForTatStrategy extends RandomStrategy {
     @Override
-    public PlayerChoice execute(int turnCount, Player player, Player otherPlayer) {
-        if (turnCount == 1) {
-            return PlayerChoice.COOPERATE;
+    public String getUniqueId() {
+        return "GENEROUS_TIT_FOR_TAT";
+    }
+
+    @Override
+    public String getFullName() {
+        return "Pacificateur naïf";
+    }
+
+    @Override
+    public StrategyChoice execute(StrategyExecutionData data) {
+        if (data.getGameCurrentTurnCount() == 1) {
+            return StrategyChoice.COOPERATE;
         } else {
-            return otherPlayer.hasDefectedLastTurn() ? chooseRandomly(PlayerChoice.DEFECT) : PlayerChoice.COOPERATE;
+            return data.hasOpposingPlayerDefectedLastTurn() ? chooseRandomly(StrategyChoice.DEFECT) : StrategyChoice.COOPERATE;
         }
     }
 }

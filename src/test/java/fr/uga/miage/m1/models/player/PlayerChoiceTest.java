@@ -1,12 +1,13 @@
 package fr.uga.miage.m1.models.player;
 
+import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("A player choice")
-class PlayerChoiceTest {
-    PlayerChoice choice;
+class StrategyChoiceTest {
+    StrategyChoice choice;
 
     @Nested
     @DisplayName("'getOpposite' method")
@@ -14,22 +15,22 @@ class PlayerChoiceTest {
         @Test
         @DisplayName("should return NONE when choice is NONE")
         void shouldReturnNoneWhenChoiceIsNone() {
-            choice = PlayerChoice.NONE;
-            assertEquals(PlayerChoice.NONE, choice.getOpposite());
+            choice = StrategyChoice.NONE;
+            assertEquals(StrategyChoice.NONE, choice.getOpposite());
         }
 
         @Test
         @DisplayName("should return DEFECT when choice is COOPERATE")
         void shouldReturnDefectWhenChoiceIsCooperate() {
-            choice = PlayerChoice.COOPERATE;
-            assertEquals(PlayerChoice.DEFECT, choice.getOpposite());
+            choice = StrategyChoice.COOPERATE;
+            assertEquals(StrategyChoice.DEFECT, choice.getOpposite());
         }
 
         @Test
         @DisplayName("should return COOPERATE when choice is DEFECT")
         void shouldReturnCooperateWhenChoiceIsDefect() {
-            choice = PlayerChoice.DEFECT;
-            assertEquals(PlayerChoice.COOPERATE, choice.getOpposite());
+            choice = StrategyChoice.DEFECT;
+            assertEquals(StrategyChoice.COOPERATE, choice.getOpposite());
         }
     }
 
@@ -39,21 +40,21 @@ class PlayerChoiceTest {
         @Test
         @DisplayName("should return true when choice is DEFECT")
         void shouldReturnTrueWhenChoiceIsDefect() {
-            choice = PlayerChoice.DEFECT;
+            choice = StrategyChoice.DEFECT;
             assertTrue(choice.isDefect());
         }
 
         @Test
         @DisplayName("should return false when choice is COOPERATE")
         void shouldReturnFalseWhenChoiceIsCooperate() {
-            choice = PlayerChoice.COOPERATE;
+            choice = StrategyChoice.COOPERATE;
             assertFalse(choice.isDefect());
         }
 
         @Test
         @DisplayName("should return false when choice is NONE")
         void shouldReturnFalseWhenChoiceIsNone() {
-            choice = PlayerChoice.NONE;
+            choice = StrategyChoice.NONE;
             assertFalse(choice.isDefect());
         }
     }
@@ -64,21 +65,21 @@ class PlayerChoiceTest {
         @Test
         @DisplayName("should return false when choice is DEFECT")
         void shouldReturnFalseWhenChoiceIsDefect() {
-            choice = PlayerChoice.DEFECT;
+            choice = StrategyChoice.DEFECT;
             assertFalse(choice.isCooperate());
         }
 
         @Test
         @DisplayName("should return true when choice is COOPERATE")
         void shouldReturnTrueWhenChoiceIsCooperate() {
-            choice = PlayerChoice.COOPERATE;
+            choice = StrategyChoice.COOPERATE;
             assertTrue(choice.isCooperate());
         }
 
         @Test
         @DisplayName("should return false when choice is NONE")
         void shouldReturnFalseWhenChoiceIsNone() {
-            choice = PlayerChoice.NONE;
+            choice = StrategyChoice.NONE;
             assertFalse(choice.isCooperate());
         }
     }
@@ -89,21 +90,21 @@ class PlayerChoiceTest {
         @Test
         @DisplayName("should return false when choice is DEFECT")
         void shouldReturnFalseWhenChoiceIsDefect() {
-            choice = PlayerChoice.DEFECT;
+            choice = StrategyChoice.DEFECT;
             assertFalse(choice.isNone());
         }
 
         @Test
         @DisplayName("should return false when choice is COOPERATE")
         void shouldReturnFalseWhenChoiceIsCooperate() {
-            choice = PlayerChoice.COOPERATE;
+            choice = StrategyChoice.COOPERATE;
             assertFalse(choice.isNone());
         }
 
         @Test
         @DisplayName("should return true when choice is NONE")
         void shouldReturnTrueWhenChoiceIsNone() {
-            choice = PlayerChoice.NONE;
+            choice = StrategyChoice.NONE;
             assertTrue(choice.isNone());
         }
     }
@@ -111,33 +112,33 @@ class PlayerChoiceTest {
     @Nested
     @DisplayName("'is' method")
     class IsMethod {
-        PlayerChoice choiceParameter;
+        StrategyChoice choiceParameter;
 
         @Nested
         @DisplayName("with COOPERATE as parameter")
         class WithCooperateAsParameter {
             WithCooperateAsParameter() {
-                choiceParameter = PlayerChoice.COOPERATE;
+                choiceParameter = StrategyChoice.COOPERATE;
             }
 
             @Test
             @DisplayName("should return false when choice is DEFECT")
             void shouldReturnFalseWhenChoiceIsDefect() {
-                choice = PlayerChoice.DEFECT;
+                choice = StrategyChoice.DEFECT;
                 assertFalse(choice.is(choiceParameter));
             }
 
             @Test
             @DisplayName("should return true when choice is COOPERATE")
             void shouldReturnTrueWhenChoiceIsCooperate() {
-                choice = PlayerChoice.COOPERATE;
+                choice = StrategyChoice.COOPERATE;
                 assertTrue(choice.is(choiceParameter));
             }
 
             @Test
             @DisplayName("should return false when choice is NONE")
             void shouldReturnFalseWhenChoiceIsNone() {
-                choice = PlayerChoice.NONE;
+                choice = StrategyChoice.NONE;
                 assertFalse(choice.is(choiceParameter));
             }
         }
@@ -146,27 +147,27 @@ class PlayerChoiceTest {
         @DisplayName("with DEFECT as parameter")
         class WithDefectAsParameter {
             WithDefectAsParameter() {
-                choiceParameter = PlayerChoice.DEFECT;
+                choiceParameter = StrategyChoice.DEFECT;
             }
 
             @Test
             @DisplayName("should return true when choice is DEFECT")
             void shouldReturnTrueWhenChoiceIsDefect() {
-                choice = PlayerChoice.DEFECT;
+                choice = StrategyChoice.DEFECT;
                 assertTrue(choice.is(choiceParameter));
             }
 
             @Test
             @DisplayName("should return false when choice is COOPERATE")
             void shouldReturnFalseWhenChoiceIsCooperate() {
-                choice = PlayerChoice.COOPERATE;
+                choice = StrategyChoice.COOPERATE;
                 assertFalse(choice.is(choiceParameter));
             }
 
             @Test
             @DisplayName("should return false when choice is NONE")
             void shouldReturnFalseWhenChoiceIsNone() {
-                choice = PlayerChoice.NONE;
+                choice = StrategyChoice.NONE;
                 assertFalse(choice.is(choiceParameter));
             }
         }
@@ -175,27 +176,27 @@ class PlayerChoiceTest {
         @DisplayName("with NONE as parameter")
         class WithNoneAsParameter {
             WithNoneAsParameter() {
-                choiceParameter = PlayerChoice.NONE;
+                choiceParameter = StrategyChoice.NONE;
             }
 
             @Test
             @DisplayName("should return false when choice is DEFECT")
             void shouldReturnFalseWhenChoiceIsDefect() {
-                choice = PlayerChoice.DEFECT;
+                choice = StrategyChoice.DEFECT;
                 assertFalse(choice.is(choiceParameter));
             }
 
             @Test
             @DisplayName("should return false when choice is COOPERATE")
             void shouldReturnFalseWhenChoiceIsCooperate() {
-                choice = PlayerChoice.COOPERATE;
+                choice = StrategyChoice.COOPERATE;
                 assertFalse(choice.is(choiceParameter));
             }
 
             @Test
             @DisplayName("should return true when choice is NONE")
             void shouldReturnTrueWhenChoiceIsNone() {
-                choice = PlayerChoice.NONE;
+                choice = StrategyChoice.NONE;
                 assertTrue(choice.is(choiceParameter));
             }
         }

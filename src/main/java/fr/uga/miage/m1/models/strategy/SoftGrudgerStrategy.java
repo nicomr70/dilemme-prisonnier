@@ -1,7 +1,8 @@
 package fr.uga.miage.m1.models.strategy;
 
-import fr.uga.miage.m1.models.player.Player;
-import fr.uga.miage.m1.models.player.PlayerChoice;
+import fr.uga.miage.m1.sharedstrategy.IStrategy;
+import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
+import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 
 import java.util.Iterator;
 import java.util.List;
@@ -10,16 +11,16 @@ import java.util.List;
 final class SoftGrudgerStrategy implements IStrategy {
     private boolean allowPunishment;
 
-    private final List<PlayerChoice> punishment = List.of(
-            PlayerChoice.DEFECT,
-            PlayerChoice.DEFECT,
-            PlayerChoice.DEFECT,
-            PlayerChoice.DEFECT,
-            PlayerChoice.COOPERATE,
-            PlayerChoice.COOPERATE
+    private final List<StrategyChoice> punishment = List.of(
+            StrategyChoice.DEFECT,
+            StrategyChoice.DEFECT,
+            StrategyChoice.DEFECT,
+            StrategyChoice.DEFECT,
+            StrategyChoice.COOPERATE,
+            StrategyChoice.COOPERATE
     );
 
-    private Iterator<PlayerChoice> punishmentIterator;
+    private Iterator<StrategyChoice> punishmentIterator;
 
     private void resetPunishmentIterator() {
         punishmentIterator = punishment.stream().iterator();
@@ -30,19 +31,29 @@ final class SoftGrudgerStrategy implements IStrategy {
     }
 
     @Override
-    public PlayerChoice execute(int turnCount, Player player, Player otherPlayer) {
+    public String getUniqueId() {
+        return "SOF_GRUDGER";
+    }
+
+    @Override
+    public String getFullName() {
+        return "Rancunier doux";
+    }
+
+    @Override
+    public StrategyChoice execute(StrategyExecutionData data) {
         if (allowPunishment && punishmentIterator.hasNext()) {
             return punishmentIterator.next();
         } else {
             if (!punishmentIterator.hasNext()) {
                 allowPunishment = false;
             }
-            if (turnCount != 1 && otherPlayer.hasDefectedLastTurn()) {
+            if (data.getGameCurrentTurnCount() != 1 && data.hasOpposingPlayerDefectedLastTurn()) {
                 resetPunishmentIterator();
                 allowPunishment = true;
                 return punishmentIterator.next();
             }
-            return PlayerChoice.COOPERATE;
+            return StrategyChoice.COOPERATE;
         }
     }
 }

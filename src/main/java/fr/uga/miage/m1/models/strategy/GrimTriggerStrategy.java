@@ -1,22 +1,33 @@
 package fr.uga.miage.m1.models.strategy;
 
-import fr.uga.miage.m1.models.player.Player;
-import fr.uga.miage.m1.models.player.PlayerChoice;
+import fr.uga.miage.m1.sharedstrategy.IStrategy;
+import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
+import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 
 /** Stratégie Rancunier */
 final class GrimTriggerStrategy implements IStrategy {
     private boolean allowDefect;
 
     @Override
-    public PlayerChoice execute(int turnCount, Player player, Player otherPlayer) {
+    public String getUniqueId() {
+        return "GRIM_TRIGGER";
+    }
+
+    @Override
+    public String getFullName() {
+        return "Rancunier";
+    }
+
+    @Override
+    public StrategyChoice execute(StrategyExecutionData data) {
         if (allowDefect) {
-            return PlayerChoice.DEFECT;
+            return StrategyChoice.DEFECT;
         } else {
-            if (turnCount != 1 && otherPlayer.hasDefectedLastTurn()) {
+            if (data.getGameCurrentTurnCount() != 1 && data.hasOpposingPlayerDefectedLastTurn()) {
                 allowDefect = true;
-                return PlayerChoice.DEFECT;
+                return StrategyChoice.DEFECT;
             }
-            return PlayerChoice.COOPERATE;
+            return StrategyChoice.COOPERATE;
         }
     }
 }

@@ -2,10 +2,11 @@ package fr.uga.miage.m1.models.game;
 
 import fr.uga.miage.m1.exceptions.StrategyException;
 import fr.uga.miage.m1.models.player.Player;
-import fr.uga.miage.m1.models.player.PlayerChoice;
 import fr.uga.miage.m1.models.player.PlayerMove;
 import fr.uga.miage.m1.models.player.PlayerScore;
 import fr.uga.miage.m1.requests.HttpRequest;
+import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
+import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 import fr.uga.miage.m1.utils.SseEmitterPool;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -53,24 +54,33 @@ public class Game {
     }
 
     public void aiTakeTurn(Player aiPlayer) throws StrategyException {
-        PlayerChoice choice = aiPlayer.strategyPlay(turnCount, getOpposingPlayer(aiPlayer));
+        Player opposingPlayer = getOpposingPlayer(aiPlayer);
+        StrategyExecutionData strategyExecutionData = new StrategyExecutionData()
+                .setGameCurrentTurnCount(turnCount)
+                .setMainPlayerScore(aiPlayer.getScore())
+                .setMainPlayerPreviousScore(aiPlayer.getPreviousScore())
+                .setMainPlayerChoicesHistory(aiPlayer.getChoicesHistory())
+                .setOpposingPlayerScore(opposingPlayer.getScore())
+                .setOpposingPlayerPreviousScore(opposingPlayer.getPreviousScore())
+                .setOpposingPlayerChoicesHistory(opposingPlayer.getChoicesHistory());
+        StrategyChoice choice = aiPlayer.strategyPlay(strategyExecutionData);
         updateMoveHistory(aiPlayer, choice);
         aiPlayer.disallowToPlay();
     }
 
-    public synchronized void humanTakeTurn(Player humanPlayer, PlayerChoice choice) {
+    public synchronized void humanTakeTurn(Player humanPlayer, StrategyChoice choice) {
         humanPlayer.play(choice);
         updateMoveHistory(humanPlayer, choice);
         humanPlayer.disallowToPlay();
     }
 
-    private void updateMoveHistory(Player player, PlayerChoice choice) {
+    private void updateMoveHistory(Player player, StrategyChoice choice) {
         moveHistory.add(new PlayerMove(player, choice, turnCount));
     }
 
     private void calculateTurnScore() {
-        PlayerChoice player1Choice = player1.getCurrentChoice();
-        PlayerChoice player2Choice = player2.getCurrentChoice();
+        StrategyChoice player1Choice = player1.getCurrentChoice();
+        StrategyChoice player2Choice = player2.getCurrentChoice();
 
         if (!player1Choice.isNone() && !player2Choice.isNone()) {
             switch (player1Choice.ordinal() + player2Choice.ordinal()) {
@@ -137,7 +147,7 @@ public class Game {
         return player1 != null && player2 != null;
     }
 
-    public synchronized Game takeTurn(int playerId, PlayerChoice choice) throws StrategyException {
+    public synchronized Game takeTurn(int playerId, StrategyChoice choice) throws StrategyException {
         Player player = getPlayerById(playerId);
         Player opposingPlayer = getOpposingPlayer(player);
         if (requireNonNull(opposingPlayer).hasStrategy()) {

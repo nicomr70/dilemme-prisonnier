@@ -25,6 +25,7 @@ public class HttpRequest {
     //ici permet de creer une partie
     @PutMapping("createGame/maxTurnCount={maxTurnCount}")
     public ResponseEntity<Boolean> gameFactory(@PathVariable(name = "maxTurnCount") int maxTurnCount) {
+
         Game g = new Game(maxTurnCount);
         RestServer.getGamePool().registerGame(g);
         updateAllGames();

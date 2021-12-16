@@ -1,7 +1,9 @@
 package fr.uga.miage.m1.models.player;
 
 import fr.uga.miage.m1.exceptions.StrategyException;
-import fr.uga.miage.m1.models.strategy.IStrategy;
+import fr.uga.miage.m1.sharedstrategy.IStrategy;
+import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
+import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,7 +20,7 @@ class PlayerTest {
     @BeforeEach
     void setUp() {
         player = new Player(playerName, strategy);
-        when(strategy.execute(anyInt(), eq(player), any(Player.class))).thenReturn(PlayerChoice.COOPERATE);
+        when(strategy.execute(any(StrategyExecutionData.class))).thenReturn(StrategyChoice.COOPERATE);
     }
 
     @Nested
@@ -93,7 +95,7 @@ class PlayerTest {
     class ManualPlayMethod {
         @BeforeEach
         void manualPlay() {
-            player.play(PlayerChoice.DEFECT);
+            player.play(StrategyChoice.DEFECT);
         }
 
         @Test
@@ -105,7 +107,7 @@ class PlayerTest {
         @Test
         @DisplayName("should update player current choice")
         void shouldUpdatePlayerCurrentChoice() {
-            assertEquals(PlayerChoice.DEFECT, player.getCurrentChoice());
+            assertEquals(StrategyChoice.DEFECT, player.getCurrentChoice());
         }
     }
 
@@ -115,22 +117,22 @@ class PlayerTest {
         @Test
         @DisplayName("should set that player can no longer play")
         void shouldSetThatPlayerCanNoLongerPlay() throws StrategyException {
-            player.strategyPlay(42, mock(Player.class));
+            player.strategyPlay(mock(StrategyExecutionData.class));
             assertFalse(player.canPlay());
         }
 
         @Test
         @DisplayName("should update player current choice")
         void shouldUpdatePlayerCurrentChoice() throws StrategyException {
-            player.strategyPlay(42, mock(Player.class));
-            assertEquals(PlayerChoice.COOPERATE, player.getCurrentChoice());
+            player.strategyPlay(mock(StrategyExecutionData.class));
+            assertEquals(StrategyChoice.COOPERATE, player.getCurrentChoice());
         }
 
         @Test
         @DisplayName("should throw an exception when strategy is not set")
         void shouldThrowAnExceptionWhenStrategyIsNotSet() {
             player.setStrategy(null);
-            assertThrows(StrategyException.class, () -> player.strategyPlay(42, mock(Player.class)));
+            assertThrows(StrategyException.class, () -> player.strategyPlay(mock(StrategyExecutionData.class)));
         }
     }
 
@@ -140,15 +142,15 @@ class PlayerTest {
         @Test
         @DisplayName("should return NONE when no choice made")
         void shouldReturnNoneWhenNoChoiceHasBeenMade() {
-            assertEquals(PlayerChoice.NONE, player.getLastChoice());
+            assertEquals(StrategyChoice.NONE, player.getLastChoice());
         }
 
         @Test
         @DisplayName("should return player's last choice")
         void shouldReturnPlayersLastChoice() {
-            player.play(PlayerChoice.COOPERATE);
+            player.play(StrategyChoice.COOPERATE);
             player.updateChoicesHistory();
-            assertEquals(PlayerChoice.COOPERATE, player.getLastChoice());
+            assertEquals(StrategyChoice.COOPERATE, player.getLastChoice());
         }
     }
 
@@ -157,30 +159,30 @@ class PlayerTest {
     class GetChoiceCountMethod {
         @BeforeEach
         void simulateGame() {
-            player.play(PlayerChoice.COOPERATE);
+            player.play(StrategyChoice.COOPERATE);
             player.updateChoicesHistory();
-            player.play(PlayerChoice.DEFECT);
+            player.play(StrategyChoice.DEFECT);
             player.updateChoicesHistory();
-            player.play(PlayerChoice.COOPERATE);
+            player.play(StrategyChoice.COOPERATE);
             player.updateChoicesHistory();
         }
 
         @Test
         @DisplayName("should not found any NONE choice")
         void shouldNotFoundAnyNoneChoice() {
-            assertEquals(0, player.getChoiceCount(PlayerChoice.NONE));
+            assertEquals(0, player.getChoiceCount(StrategyChoice.NONE));
         }
 
         @Test
         @DisplayName("should found that COOPERATE has been chosen two times")
         void shouldFoundThatCooperateHasBeenChosenTwoTimes() {
-            assertEquals(2, player.getChoiceCount(PlayerChoice.COOPERATE));
+            assertEquals(2, player.getChoiceCount(StrategyChoice.COOPERATE));
         }
 
         @Test
         @DisplayName("should found that DEFECT has been chosen one time")
         void shouldFoundThatDefectHasBeenChosenOneTime() {
-            assertEquals(1, player.getChoiceCount(PlayerChoice.DEFECT));
+            assertEquals(1, player.getChoiceCount(StrategyChoice.DEFECT));
         }
     }
 
@@ -190,7 +192,7 @@ class PlayerTest {
         @Test
         @DisplayName("should return true when last choice is COOPERATE")
         void shouldReturnTrueWhenLastChoiceIsCooperate() {
-            player.play(PlayerChoice.COOPERATE);
+            player.play(StrategyChoice.COOPERATE);
             player.updateChoicesHistory();
             assertTrue(player.hasCooperatedLastTurn());
         }
@@ -198,7 +200,7 @@ class PlayerTest {
         @Test
         @DisplayName("should return false when last choice is DEFECT")
         void shouldReturnFalseWhenLastChoiceIsDefect() {
-            player.play(PlayerChoice.DEFECT);
+            player.play(StrategyChoice.DEFECT);
             player.updateChoicesHistory();
             assertFalse(player.hasCooperatedLastTurn());
         }
@@ -210,7 +212,7 @@ class PlayerTest {
         @Test
         @DisplayName("should return true when last choice is DEFECT")
         void shouldReturnTrueWhenLastChoiceIsDefect() {
-            player.play(PlayerChoice.DEFECT);
+            player.play(StrategyChoice.DEFECT);
             player.updateChoicesHistory();
             assertTrue(player.hasDefectedLastTurn());
         }
@@ -218,7 +220,7 @@ class PlayerTest {
         @Test
         @DisplayName("should return false when last choice is COOPERATE")
         void shouldReturnFalseWhenLastChoiceIsCooperate() {
-            player.play(PlayerChoice.COOPERATE);
+            player.play(StrategyChoice.COOPERATE);
             player.updateChoicesHistory();
             assertFalse(player.hasDefectedLastTurn());
         }

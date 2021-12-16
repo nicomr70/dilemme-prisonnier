@@ -4,8 +4,6 @@ import fr.uga.miage.m1.RestServer;
 import fr.uga.miage.m1.exceptions.StrategyException;
 import fr.uga.miage.m1.models.game.Game;
 import fr.uga.miage.m1.models.player.Player;
-import fr.uga.miage.m1.models.player.PlayerChoice;
-import fr.uga.miage.m1.models.strategy.StrategyType;
 import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +29,24 @@ public class HttpRequestGame {
     @PutMapping("/play/gameId={gameId}/playerId={playerId}/move={move}")
     public synchronized ResponseEntity<Game> playMove(
             @PathVariable(name = "gameId") int gameId,
-            @PathVariable(name = "playerId") int playerId,
+            @PathVariable(name = "playerId") int playerId//,
             @PathVariable(name = "move") PlayerChoice move
     ) throws StrategyException {
         log.info("game id : "+ gameId + " playerId : "+playerId+ " move : "+move);
         return ResponseEntity.ok(RestServer.getGamePool().getGame(gameId).takeTurn(playerId, move));
+    }
+
+    @PutMapping("/gameId={gameId}/playerId={playerId}/strategy={strategy}")
+    public boolean setStrategyforPlayer(
+            @PathVariable(name = "gameId")int gameId,
+            @PathVariable(name="playerId")int playerId,
+            @PathVariable(name ="strategy" )String strategy){
+       Game g =  RestServer.getGamePool().getGame(gameId);
+       Player player = g.getPlayerById(playerId);
+       log.info("game recuperer : "+g.getId());
+       log.info("player recuperer : "+player.getId());
+       log.info("strategy reçu :"+strategy);
+       return false;
     }
 
     @GetMapping("/allStrategies")
