@@ -11,14 +11,6 @@ import java.util.Set;
 @Log
 public class Sandbox {
     public static void main(String[] args) {
-        new Reflections("fr.uga.miage.m1")
-                .getSubTypesOf(IStrategy.class).forEach(str -> {
-                    try {
-                        log.info(String.valueOf(str.getDeclaredConstructor().newInstance().getFullName()));
-                    } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-
-                });
+       StrategyFactory.STRATEGIES_MAP.forEach((k, v) -> log.info(k + " : " + v.getName()));
     }
 }

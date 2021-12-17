@@ -6,6 +6,8 @@ import fr.uga.miage.m1.sharedstrategy.RandomStrategy;
 import lombok.extern.java.Log;
 import org.reflections.Reflections;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,7 +22,16 @@ public final class StrategyFactory {
     private StrategyFactory() {}
 
     private static Map<String, Class<? extends IStrategy>> getStrategiesMap() {
-        return null;
+        Map<String, Class<? extends IStrategy>> strategiesMap = new HashMap<>();
+        STRATEGIES_SET.forEach(strategyClass -> {
+            try {
+                String strategyId = strategyClass.getDeclaredConstructor().newInstance().getUniqueId();
+                strategiesMap.put(strategyId, strategyClass);
+            } catch (Exception e) {
+                log.severe(e.getMessage());
+            }
+        });
+        return strategiesMap;
     }
 
     public static IStrategy getStrategyFromType(String strategyId) throws StrategyException {
