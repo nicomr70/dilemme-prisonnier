@@ -75,7 +75,9 @@ public class Player {
     }
 
     public void updateChoicesHistory() {
+        if (currentChoice != null) {
         choicesHistory.add(currentChoice);
+        }
     }
 
     public int getScore() {

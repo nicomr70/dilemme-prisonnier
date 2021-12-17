@@ -82,7 +82,7 @@ public class Game {
         StrategyChoice player1Choice = player1.getCurrentChoice();
         StrategyChoice player2Choice = player2.getCurrentChoice();
 
-        if (!player1Choice.isNone() && !player2Choice.isNone()) {
+        if (player1Choice != null && player2Choice != null && !player1Choice.isNone() && !player2Choice.isNone()) {
             switch (player1Choice.ordinal() + player2Choice.ordinal()) {
                 case 0:
                     PlayerScore.applyBothDefected(player1, player2);

@@ -21,6 +21,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sonar.host.url>http://im2ag-sonar.u-ga.fr:9000</sonar.host.url>
+    <mockito.version>4.1.0</mockito.version>
   </properties>
 
   <repositories>

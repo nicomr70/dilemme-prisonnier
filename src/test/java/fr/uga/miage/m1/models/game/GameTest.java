@@ -302,23 +302,15 @@ class GameTest {
 
         @Test
         @DisplayName("should make opposing player play if its an AI (i.e. it has a strategy")
-        void shouldMakeOpposingPlayerPlayIfItsAnAi() throws StrategyException {
+        void shouldMakeOpposingPlayerPlayIfItsAnAi() throws Exception {
             game.setTurnCount(4);
             setHumanPlayers();
             StrategyChoice player1Choice = StrategyChoice.COOPERATE;
             IStrategy player2Strategy = mock(IStrategy.class);
-            StrategyExecutionData strategyExecutionData = new StrategyExecutionData()
-                    .setGameCurrentTurnCount(game.getTurnCount())
-                    .setMainPlayerScore(player2.getScore())
-                    .setMainPlayerPreviousScore(player2.getPreviousScore())
-                    .setMainPlayerChoicesHistory(player2.getChoicesHistory())
-                    .setOpposingPlayerScore(player1.getScore())
-                    .setOpposingPlayerPreviousScore(player1.getPreviousScore())
-                    .setOpposingPlayerChoicesHistory(player1.getChoicesHistory());
-            when(player2Strategy.execute(strategyExecutionData)).thenReturn(StrategyChoice.DEFECT);
             player2.setStrategy(player2Strategy);
+            when(player2Strategy.execute(new StrategyExecutionData())).thenReturn(StrategyChoice.DEFECT);
             game.takeTurn(player1.getId(), player1Choice);
-            verify(player2Strategy).execute(strategyExecutionData);
+            verify(player2Strategy).execute(any(StrategyExecutionData.class));
         }
 
         @Test
