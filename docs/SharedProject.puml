@@ -3,9 +3,9 @@
 
 cloud "github sharedStrategies" {
 
-     IStrategie1 --- [ISstrategy]
-     IStrategie2 --- [ISstrategy]
-     IStrategie3 --- [ISstrategy]
+     IStrategie1 --- [IStrategy]
+     IStrategie2 --- [IStrategy]
+     IStrategie3 --- [IStrategy]
 }
 
 cloud "github Nicolas and Alexis"{
