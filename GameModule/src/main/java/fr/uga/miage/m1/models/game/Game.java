@@ -10,6 +10,7 @@ import fr.uga.miage.m1.utils.SseEmitterPool;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.java.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import static java.util.Objects.*;
 
 @Getter
 @Setter
+@Log
 public class Game {
     public static final SseEmitterPool poolAllGames = new SseEmitterPool();
     public static final GamePool gamePool = new GamePool();
@@ -36,12 +38,16 @@ public class Game {
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     public SseEmitterPool poolWaitPlayer;
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    public SseEmitterPool poolViewGame;
 
     public Game(int maxTurnCount) {
         id = ++gameCounter;
         this.maxTurnCount = maxTurnCount;
         poolPlayGame = new SseEmitterPool();
         poolWaitPlayer = new SseEmitterPool();
+        poolViewGame = new SseEmitterPool();
     }
 
     public Game(int maxTurnCount, Player player1, Player player2) {
@@ -114,6 +120,7 @@ public class Game {
         player2.updateChoicesHistory();
         player1.allowToPlay();
         player2.allowToPlay();
+        turnCount++;
     }
 
     public void setPlayer(Player player) {
@@ -158,6 +165,7 @@ public class Game {
         if (canEndTurn()) {
             endTurn();
             poolPlayGame.sendAll(this);
+            poolViewGame.sendAll(this);
         }
         return this;
     }
@@ -167,6 +175,7 @@ public class Game {
         if (areAllPlayersHere()) {
             poolWaitPlayer.sendAll(this);
         }
+        updateAllGames();
         return player;
     }
 

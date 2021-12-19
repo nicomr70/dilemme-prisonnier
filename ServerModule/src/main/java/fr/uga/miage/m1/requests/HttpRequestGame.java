@@ -44,14 +44,14 @@ public class HttpRequestGame {
 
     @GetMapping("/allStrategies")
     public ResponseEntity<Collection<String>> allStrategies(){
-        return ResponseEntity.ok(StrategyFactory.STRATEGIES_FULL_NAME.keySet());
+        return ResponseEntity.ok(StrategyFactory.getSTRATEGIES_FULL_NAME().keySet());
     }
 
     @PutMapping("/{gameId}/{playerId}/{strategy}")
     public void setStrategyPlayer(@PathVariable("gameId")int gameId ,
                                   @PathVariable("playerId")int playerId,
                                   @PathVariable("strategy")String strategy) throws StrategyException {
-        IStrategy s= StrategyFactory.getStrategyFromType(StrategyFactory.STRATEGIES_FULL_NAME.get(strategy));
+        IStrategy s= StrategyFactory.getStrategyFromType(StrategyFactory.getSTRATEGIES_FULL_NAME().get(strategy));
         Game.gamePool.getGame(gameId).getPlayerById(playerId).setStrategy(s);
     }
 
@@ -97,6 +97,10 @@ public class HttpRequestGame {
         }
     }
 
+    @GetMapping("/viewGame/{gameId}")
+    public SseEmitter getSseviewGame(@PathVariable("gameId")int gameId){
+        return Game.gamePool.getGame(gameId).poolViewGame.newEmitter("view game (gameId ="+gameId+")");
+    }
 
     @GetMapping("{gameId}/player/{playerId}")
     public ResponseEntity<Player> player(

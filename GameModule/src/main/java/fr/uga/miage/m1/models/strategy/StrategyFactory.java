@@ -3,6 +3,8 @@ package fr.uga.miage.m1.models.strategy;
 import fr.uga.miage.m1.exceptions.StrategyException;
 import fr.uga.miage.m1.sharedstrategy.IStrategy;
 import fr.uga.miage.m1.sharedstrategy.RandomStrategy;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.java.Log;
 import org.reflections.Reflections;
 
@@ -16,8 +18,10 @@ public final class StrategyFactory {
             new Reflections("fr.uga.miage.m1")
                     .getSubTypesOf(IStrategy.class);
 
-    public static final Map<String, String> STRATEGIES_FULL_NAME = new HashMap<>();
-    public static final Map<String, Class<? extends IStrategy>> STRATEGIES_MAP = getStrategiesMap();
+    @Getter(AccessLevel.PUBLIC)
+    private static final Map<String, String> STRATEGIES_FULL_NAME = new HashMap<>();
+    @Getter(AccessLevel.PUBLIC)
+    private static final Map<String, Class<? extends IStrategy>> STRATEGIES_MAP = getStrategiesMap();
 
     private StrategyFactory() {}
 
