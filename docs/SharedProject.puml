@@ -1,7 +1,7 @@
 @startuml
 'https://plantuml.com/component-diagram
 
-cloud "github IStrategy" {
+cloud "github sharedStrategies" {
 
      IStrategie1 --- [ISstrategy]
      IStrategie2 --- [ISstrategy]
@@ -9,8 +9,8 @@ cloud "github IStrategy" {
 }
 
 cloud "github Nicolas and Alexis"{
-    [sharedStrategy] - SharedStartegies
-    [sharedStrategy] --( IStrategie2
+    [prisonners-dilemma-strategies] - SharedStartegies
+    [prisonners-dilemma-strategies] --( IStrategie2
 }
 
 cloud "github Corentin And Tariq"{
