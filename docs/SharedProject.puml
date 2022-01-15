@@ -1,0 +1,32 @@
+@startuml
+'https://plantuml.com/component-diagram
+
+cloud "github sharedStrategies" {
+
+     IStrategie1 --- [IStrategy]
+     IStrategie2 --- [IStrategy]
+     IStrategie3 --- [IStrategy]
+}
+
+cloud "github Nicolas and Alexis"{
+    [prisonners-dilemma-strategies] - SharedStartegies
+    [prisonners-dilemma-strategies] --( IStrategie2
+}
+
+cloud "github Corentin And Tariq"{
+    [prisonner-dilemma-strategy] - sharedStrat2
+    [prisonner-dilemma-strategy] --( IStrategie3
+}
+
+
+node "Project of Nicolas and Alexis"{
+    [Game Nicolas and Alexis] --( IStrategie1
+    [Game Nicolas and Alexis] ---(sharedStrat2
+
+}
+
+node "Project of Corentin and Tariq"{
+    [Game Tariq and Corentin]
+     SharedStartegies )--[Game Tariq and Corentin]
+}
+@enduml
