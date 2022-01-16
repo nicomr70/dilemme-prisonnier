@@ -1,5 +1,6 @@
 package fr.uga.miage.m1.models.strategy;
 
+import fr.uga.miage.m1.exceptions.GameException;
 import fr.uga.miage.m1.exceptions.StrategyException;
 import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("The 'Naive Prober' strategy")
 class NaiveProberStrategyTest extends StrategyTest {
     @BeforeEach
-    void initGame() throws StrategyException {
+    void initGame() throws StrategyException, GameException {
         initGameWithAiPlayers("NAIVE_PROBER", "RANDOM");
     }
 

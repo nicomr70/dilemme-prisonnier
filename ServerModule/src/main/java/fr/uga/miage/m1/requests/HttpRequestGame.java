@@ -1,12 +1,13 @@
 package fr.uga.miage.m1.requests;
 
 import fr.uga.miage.m1.exceptions.StrategyException;
+import fr.uga.miage.m1.interfaces.GameServiceI;
 import fr.uga.miage.m1.models.game.Game;
 import fr.uga.miage.m1.models.player.Player;
 import fr.uga.miage.m1.models.strategy.StrategyFactory;
-import fr.uga.miage.m1.sharedstrategy.IStrategy;
 import lombok.extern.java.Log;
 import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -18,13 +19,12 @@ import java.util.Collection;
 @Log
 public class HttpRequestGame {
 
+    @Autowired
+    GameServiceI gameService;
+
     @GetMapping("/waitPlayerPlay/gameId={gameId}")
     public SseEmitter waitPlayerPlay(@PathVariable(name = "gameId")int gameId) {
-        return Game
-                .gamePool
-                .getGame(gameId)
-                .poolPlayGame
-                .newEmitter("wait player play (gameId ="+gameId+")");
+        return gameService.getNewEmitterWaitPlayerPlay(gameId);
     }
 
     @PutMapping("/play/gameId={gameId}/playerId={playerId}/move={move}")
@@ -33,11 +33,11 @@ public class HttpRequestGame {
             @PathVariable(name = "playerId") int playerId,
             @PathVariable(name = "move") StrategyChoice move
     ) throws StrategyException {
-        Game g = Game.gamePool.getGame(gameId);
+        Game g = gameService.getGame(gameId);
         if(g == null){
             return ResponseEntity.status(404).body(null);
         }else{
-            return ResponseEntity.ok(Game.gamePool.getGame(gameId).takeTurn(playerId, move));
+            return ResponseEntity.ok(g.takeTurn(playerId, move));
         }
 
     }
@@ -51,31 +51,26 @@ public class HttpRequestGame {
     public void setStrategyPlayer(@PathVariable("gameId")int gameId ,
                                   @PathVariable("playerId")int playerId,
                                   @PathVariable("strategy")String strategy) throws StrategyException {
-        IStrategy s= StrategyFactory.getStrategyFromType(StrategyFactory.getSTRATEGIES_FULL_NAME().get(strategy));
-        Game.gamePool.getGame(gameId).getPlayerById(playerId).setStrategy(s);
+       gameService.setStrategyForPlayerId(strategy,playerId,playerId);
     }
 
     @GetMapping("/allMoves")
     public ResponseEntity<StrategyChoice[]> allMoves(){
-        return ResponseEntity.ok(StrategyChoice.values());
+        return ResponseEntity.ok(gameService.getAllMoves());
     }
 
     @GetMapping("waitLastPlayer/gameId={gameId}")
     public SseEmitter waitLastPlayer(
             @PathVariable(name = "gameId") int gameId
     ) {
-        return Game
-                .gamePool
-                .getGame(gameId)
-                .poolWaitPlayer
-                .newEmitter("wait player (gameId="+gameId+")");
+        return gameService.getNewEmitterWaitLastPlayer(gameId);
     }
 
     @GetMapping("initialState/gameId={gameId}")
     public ResponseEntity<Game> gameInitialState(
             @PathVariable(name = "gameId") int gameId
     ){
-        Game g = Game.gamePool.getGame(gameId);
+        Game g = gameService.getGame(gameId);
         if(g == null) {
             return ResponseEntity.status(404).body(null);
         }else{
@@ -88,7 +83,7 @@ public class HttpRequestGame {
             @PathVariable("gameId") int gameId,
             @PathVariable("playerName") String playerName
     ) {
-        Game g = Game.gamePool.getGame(gameId);
+        Game g = gameService.getGame(gameId);
         if(g == null){
             return ResponseEntity.status(404).body(null);
         }else{
@@ -98,8 +93,8 @@ public class HttpRequestGame {
     }
 
     @GetMapping("/viewGame/{gameId}")
-    public SseEmitter getSseviewGame(@PathVariable("gameId")int gameId){
-        return Game.gamePool.getGame(gameId).poolViewGame.newEmitter("view game (gameId ="+gameId+")");
+    public SseEmitter getSseViewGame(@PathVariable("gameId")int gameId){
+        return gameService.getNewEmitterViewGame(gameId);
     }
 
     @GetMapping("{gameId}/player/{playerId}")
@@ -107,7 +102,7 @@ public class HttpRequestGame {
             @PathVariable(name ="gameId") int gameId,
             @PathVariable(name = "playerId")int playerId
     ) {
-        Game g = Game.gamePool.getGame(gameId);
+        Game g = gameService.getGame(gameId);
         if(g==null){
             return ResponseEntity.status(404).body(null);
         }else{

@@ -1,5 +1,6 @@
 package fr.uga.miage.m1.models.game;
 
+import fr.uga.miage.m1.exceptions.GameException;
 import fr.uga.miage.m1.exceptions.StrategyException;
 import fr.uga.miage.m1.models.player.Player;
 import fr.uga.miage.m1.models.player.PlayerScore;
@@ -34,7 +35,7 @@ class GameTest {
     }
 
     @BeforeEach
-    void setup() {
+    void setup() throws GameException {
         game = new Game(42);
     }
 

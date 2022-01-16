@@ -1,9 +1,13 @@
 package fr.uga.miage.m1.models.game;
 
+import fr.uga.miage.m1.exceptions.GameException;
 import fr.uga.miage.m1.exceptions.StrategyException;
+import fr.uga.miage.m1.interfaces.GameServiceI;
 import fr.uga.miage.m1.models.player.Player;
 import fr.uga.miage.m1.models.player.PlayerMove;
 import fr.uga.miage.m1.models.player.PlayerScore;
+import fr.uga.miage.m1.models.strategy.StrategyFactory;
+import fr.uga.miage.m1.sharedstrategy.IStrategy;
 import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
 import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 import fr.uga.miage.m1.utils.SseEmitterPool;
@@ -11,8 +15,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.java.Log;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static java.util.Objects.*;
@@ -20,9 +26,9 @@ import static java.util.Objects.*;
 @Getter
 @Setter
 @Log
-public class Game {
-    public static final SseEmitterPool poolAllGames = new SseEmitterPool();
-    public static final GamePool gamePool = new GamePool();
+public class Game implements GameServiceI {
+    private static final SseEmitterPool poolAllGames = new SseEmitterPool();
+    private static final GamePool gamePool = new GamePool();
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     private static int gameCounter;
@@ -42,15 +48,19 @@ public class Game {
     @Getter(AccessLevel.NONE)
     public SseEmitterPool poolViewGame;
 
-    public Game(int maxTurnCount) {
-        id = ++gameCounter;
-        this.maxTurnCount = maxTurnCount;
-        poolPlayGame = new SseEmitterPool();
-        poolWaitPlayer = new SseEmitterPool();
-        poolViewGame = new SseEmitterPool();
+    public Game(int maxTurnCount) throws GameException {
+        if(maxTurnCount>=2) {
+            id = ++gameCounter;
+            this.maxTurnCount = maxTurnCount;
+            poolPlayGame = new SseEmitterPool();
+            poolWaitPlayer = new SseEmitterPool();
+            poolViewGame = new SseEmitterPool();
+        }else{
+            throw new GameException("max turn count not greater than 2 !");
+        }
     }
 
-    public Game(int maxTurnCount, Player player1, Player player2) {
+    public Game(int maxTurnCount, Player player1, Player player2) throws GameException {
         this(maxTurnCount);
         this.player1 = player1;
         this.player2 = player2;
@@ -180,6 +190,70 @@ public class Game {
     }
 
     public static void updateAllGames() {
-        Game.poolAllGames.sendAll(gamePool.asCollection());
+        poolAllGames.sendAll(gamePool.asCollection());
     }
+
+    @Override
+    public SseEmitter newEmitterAllGames() {
+        return poolAllGames.newEmitter("new all games sse emitter");
+    }
+
+    @Override
+    public void createGame(int maxTurnCount) throws GameException {
+        Game g = new Game(maxTurnCount);
+        Game.gamePool.registerGame(g);
+        updateAllGames();
+
+    }
+
+    @Override
+    public Collection<Game> getAllGame() {
+        return gamePool.asCollection();
+    }
+
+    @Override
+    public SseEmitter getNewEmitterWaitLastPlayer(int gameId) {
+        return gamePool
+                .getGame(gameId)
+                .poolWaitPlayer
+                .newEmitter("wait player (gameId="+gameId+")");
+    }
+
+    @Override
+    public SseEmitter getNewEmitterWaitPlayerPlay(int gameId) {
+        return gamePool
+                .getGame(gameId)
+                .poolPlayGame
+                .newEmitter("wait player play (gameId ="+gameId+")");
+    }
+
+    @Override
+    public SseEmitter getNewEmitterViewGame(int gameId) {
+        return gamePool
+                .getGame(gameId)
+                .poolViewGame
+                .newEmitter("view game (gameId ="+gameId+")");
+    }
+
+    @Override
+    public Game getGame(int gameId) {
+        return gamePool.getGame(gameId);
+    }
+
+    @Override
+    public Collection<String> getAllStrategy() {
+        return StrategyFactory.getSTRATEGIES_FULL_NAME().keySet();
+    }
+
+    @Override
+    public StrategyChoice[] getAllMoves() {
+        return StrategyChoice.values();
+    }
+
+    @Override
+    public void setStrategyForPlayerId(String strategy, int gameId, int playerId) throws StrategyException {
+        IStrategy s= StrategyFactory.getStrategyFromType(StrategyFactory.getSTRATEGIES_FULL_NAME().get(strategy));
+        Game.gamePool.getGame(gameId).getPlayerById(playerId).setStrategy(s);
+    }
+
 }

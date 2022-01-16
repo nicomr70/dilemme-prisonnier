@@ -1,5 +1,6 @@
 package fr.uga.miage.m1.models.strategy;
 
+import fr.uga.miage.m1.exceptions.GameException;
 import fr.uga.miage.m1.exceptions.StrategyException;
 import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayName("The 'Grim Trigger' strategy")
 class GrimTriggerStrategyTest extends StrategyTest {
     @BeforeEach
-    void initGame() throws StrategyException {
+    void initGame() throws StrategyException, GameException {
         initGameWithAiPlayers("GRIM_TRIGGER", "DEFECT");
     }
 
@@ -24,7 +25,7 @@ class GrimTriggerStrategyTest extends StrategyTest {
 
     @Test
     @DisplayName("should defect from the moment the opponent has defected")
-    void shouldDefectFromTheMomentTheOpponentHasDefected() throws StrategyException {
+    void shouldDefectFromTheMomentTheOpponentHasDefected() throws StrategyException, GameException {
         iterateTurn(17);
         assertEquals(1, player1.getChoiceCount(StrategyChoice.COOPERATE));
         assertEquals(16, player1.getChoiceCount(StrategyChoice.DEFECT));
