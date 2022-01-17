@@ -1,26 +1,26 @@
 package fr.uga.miage.m1.requests;
 
 import fr.uga.miage.m1.exceptions.StrategyException;
-import fr.uga.miage.m1.interfaces.GameServiceI;
+import fr.uga.miage.m1.service.IGameService;
 import fr.uga.miage.m1.models.game.Game;
 import fr.uga.miage.m1.models.player.Player;
-import fr.uga.miage.m1.models.strategy.StrategyFactory;
 import lombok.extern.java.Log;
 import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
 import java.util.Collection;
+
+
 @CrossOrigin
 @RestController
 @RequestMapping("/game")
 @Log
 public class HttpRequestGame {
-
     @Autowired
-    GameServiceI gameService;
+    IGameService gameService;
+
 
     @GetMapping("/waitPlayerPlay/gameId={gameId}")
     public SseEmitter waitPlayerPlay(@PathVariable(name = "gameId")int gameId) {
@@ -44,14 +44,14 @@ public class HttpRequestGame {
 
     @GetMapping("/allStrategies")
     public ResponseEntity<Collection<String>> allStrategies(){
-        return ResponseEntity.ok(StrategyFactory.getSTRATEGIES_FULL_NAME().keySet());
+        return ResponseEntity.ok(gameService.getAllStrategy());
     }
 
     @PutMapping("/{gameId}/{playerId}/{strategy}")
     public void setStrategyPlayer(@PathVariable("gameId")int gameId ,
                                   @PathVariable("playerId")int playerId,
                                   @PathVariable("strategy")String strategy) throws StrategyException {
-       gameService.setStrategyForPlayerId(strategy,playerId,playerId);
+       gameService.setStrategyForPlayerId(strategy,gameId,playerId);
     }
 
     @GetMapping("/allMoves")

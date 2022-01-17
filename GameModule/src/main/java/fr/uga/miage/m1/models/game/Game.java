@@ -2,7 +2,7 @@ package fr.uga.miage.m1.models.game;
 
 import fr.uga.miage.m1.exceptions.GameException;
 import fr.uga.miage.m1.exceptions.StrategyException;
-import fr.uga.miage.m1.interfaces.GameServiceI;
+import fr.uga.miage.m1.service.IGameService;
 import fr.uga.miage.m1.models.player.Player;
 import fr.uga.miage.m1.models.player.PlayerMove;
 import fr.uga.miage.m1.models.player.PlayerScore;
@@ -15,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.java.Log;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.ArrayList;
@@ -26,7 +27,8 @@ import static java.util.Objects.*;
 @Getter
 @Setter
 @Log
-public class Game implements GameServiceI {
+public class Game{
+    public static final String GAME_SERVICE="gameService";
     private static final SseEmitterPool poolAllGames = new SseEmitterPool();
     private static final GamePool gamePool = new GamePool();
     @Getter(AccessLevel.NONE)
@@ -193,67 +195,72 @@ public class Game implements GameServiceI {
         poolAllGames.sendAll(gamePool.asCollection());
     }
 
-    @Override
-    public SseEmitter newEmitterAllGames() {
-        return poolAllGames.newEmitter("new all games sse emitter");
+    @Service
+    public static class GameService implements IGameService {
+        @Override
+        public SseEmitter newEmitterAllGames() {
+            return poolAllGames.newEmitter("new all games sse emitter");
+        }
+
+        @Override
+        public void createGame(int maxTurnCount) throws GameException {
+            Game g = new Game(maxTurnCount);
+            Game.gamePool.registerGame(g);
+            updateAllGames();
+
+        }
+
+        @Override
+        public Collection<Game> getAllGame() {
+            return gamePool.asCollection();
+        }
+
+        @Override
+        public SseEmitter getNewEmitterWaitLastPlayer(int gameId) {
+            return gamePool
+                    .getGame(gameId)
+                    .poolWaitPlayer
+                    .newEmitter("wait player (gameId="+gameId+")");
+        }
+
+        @Override
+        public SseEmitter getNewEmitterWaitPlayerPlay(int gameId) {
+            return gamePool
+                    .getGame(gameId)
+                    .poolPlayGame
+                    .newEmitter("wait player play (gameId ="+gameId+")");
+        }
+
+        @Override
+        public SseEmitter getNewEmitterViewGame(int gameId) {
+            return gamePool
+                    .getGame(gameId)
+                    .poolViewGame
+                    .newEmitter("view game (gameId ="+gameId+")");
+        }
+
+        @Override
+        public Game getGame(int gameId) {
+            return gamePool.getGame(gameId);
+        }
+
+        @Override
+        public Collection<String> getAllStrategy() {
+            return StrategyFactory.getSTRATEGIES_FULL_NAME().keySet();
+        }
+
+        @Override
+        public StrategyChoice[] getAllMoves() {
+            return StrategyChoice.values();
+        }
+
+        @Override
+        public void setStrategyForPlayerId(String strategy, int gameId, int playerId) throws StrategyException {
+            IStrategy s= StrategyFactory.getStrategyFromType(StrategyFactory.getSTRATEGIES_FULL_NAME().get(strategy));
+            Game.gamePool.getGame(gameId).getPlayerById(playerId).setStrategy(s);
+        }
     }
 
-    @Override
-    public void createGame(int maxTurnCount) throws GameException {
-        Game g = new Game(maxTurnCount);
-        Game.gamePool.registerGame(g);
-        updateAllGames();
 
-    }
-
-    @Override
-    public Collection<Game> getAllGame() {
-        return gamePool.asCollection();
-    }
-
-    @Override
-    public SseEmitter getNewEmitterWaitLastPlayer(int gameId) {
-        return gamePool
-                .getGame(gameId)
-                .poolWaitPlayer
-                .newEmitter("wait player (gameId="+gameId+")");
-    }
-
-    @Override
-    public SseEmitter getNewEmitterWaitPlayerPlay(int gameId) {
-        return gamePool
-                .getGame(gameId)
-                .poolPlayGame
-                .newEmitter("wait player play (gameId ="+gameId+")");
-    }
-
-    @Override
-    public SseEmitter getNewEmitterViewGame(int gameId) {
-        return gamePool
-                .getGame(gameId)
-                .poolViewGame
-                .newEmitter("view game (gameId ="+gameId+")");
-    }
-
-    @Override
-    public Game getGame(int gameId) {
-        return gamePool.getGame(gameId);
-    }
-
-    @Override
-    public Collection<String> getAllStrategy() {
-        return StrategyFactory.getSTRATEGIES_FULL_NAME().keySet();
-    }
-
-    @Override
-    public StrategyChoice[] getAllMoves() {
-        return StrategyChoice.values();
-    }
-
-    @Override
-    public void setStrategyForPlayerId(String strategy, int gameId, int playerId) throws StrategyException {
-        IStrategy s= StrategyFactory.getStrategyFromType(StrategyFactory.getSTRATEGIES_FULL_NAME().get(strategy));
-        Game.gamePool.getGame(gameId).getPlayerById(playerId).setStrategy(s);
-    }
 
 }
