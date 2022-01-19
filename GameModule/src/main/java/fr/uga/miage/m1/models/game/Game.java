@@ -199,7 +199,7 @@ public class Game{
     public static class GameService implements IGameService {
         @Override
         public SseEmitter newEmitterAllGames() {
-            return poolAllGames.newEmitter("new all games sse emitter");
+            return poolAllGames.newEmitter("AllGames");
         }
 
         @Override
