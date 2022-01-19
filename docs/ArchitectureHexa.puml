@@ -1,0 +1,16 @@
+@startuml
+'https://plantuml.com/component-diagram
+
+
+node "User-side" {
+[RequestHTTP]
+}
+
+node "Business logic"{
+
+    IGameService -- [Game]
+}
+
+[RequestHTTP] -( IGameService
+
+@enduml
