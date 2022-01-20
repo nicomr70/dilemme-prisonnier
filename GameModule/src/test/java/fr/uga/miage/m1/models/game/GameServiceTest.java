@@ -21,8 +21,17 @@ class GameServiceTest {
     IGameService gameService = new Game.GameService();
 
     @Test
-    void newEmitterAllGames(){
+    void EmitterTest(){
         SseEmitter emitter = gameService.newEmitterAllGames();
+        Assertions.assertNotNull(emitter);
+        Assertions.assertEquals(Long.MAX_VALUE,emitter.getTimeout());
+        emitter = gameService.newEmitterAllGames();
+        Assertions.assertNotNull(emitter);
+        Assertions.assertEquals(Long.MAX_VALUE,emitter.getTimeout());
+        emitter = gameService.newEmitterAllGames();
+        Assertions.assertNotNull(emitter);
+        Assertions.assertEquals(Long.MAX_VALUE,emitter.getTimeout());
+        emitter = gameService.newEmitterAllGames();
         Assertions.assertNotNull(emitter);
         Assertions.assertEquals(Long.MAX_VALUE,emitter.getTimeout());
     }
@@ -45,26 +54,6 @@ class GameServiceTest {
         Assertions.assertTrue(games.size()>0);
     }
 
-    @Test
-    void getNewEmitterWaitLastPlayer(){
-        SseEmitter emitter = gameService.newEmitterAllGames();
-        Assertions.assertNotNull(emitter);
-        Assertions.assertEquals(emitter.getTimeout(),Long.MAX_VALUE);
-    }
-
-    @Test
-    void  getNewEmitterWaitPlayerPlay(){
-        SseEmitter emitter = gameService.newEmitterAllGames();
-        Assertions.assertNotNull(emitter);
-        Assertions.assertEquals(Long.MAX_VALUE,emitter.getTimeout());
-    }
-
-    @Test
-    void getNewEmitterViewGame(){
-        SseEmitter emitter = gameService.newEmitterAllGames();
-        Assertions.assertNotNull(emitter);
-        Assertions.assertEquals(Long.MAX_VALUE,emitter.getTimeout());
-    }
     @Test
     void getGame() throws GameException {
         gameService.createGame(10);
