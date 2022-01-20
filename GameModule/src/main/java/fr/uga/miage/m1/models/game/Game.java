@@ -28,7 +28,6 @@ import static java.util.Objects.*;
 @Setter
 @Log
 public class Game{
-    public static final String GAME_SERVICE="gameService";
     private static final SseEmitterPool poolAllGames = new SseEmitterPool();
     private static final GamePool gamePool = new GamePool();
     @Getter(AccessLevel.NONE)
@@ -38,8 +37,8 @@ public class Game{
     private Player player1;
     private Player player2;
     private List<PlayerMove> moveHistory = new ArrayList<>();
-    private int turnCount;
     private final int maxTurnCount;
+    private int turnCount;
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     public SseEmitterPool poolPlayGame;

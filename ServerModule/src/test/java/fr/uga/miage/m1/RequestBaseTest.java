@@ -68,20 +68,10 @@ class RequestBaseTest {
         HttpEntity entity = new HttpEntity(headers);
 
         ResponseEntity<Collection> games = restTemplate.getForEntity("/initialState",Collection.class);
-        Assertions.assertEquals(games.getStatusCode(), HttpStatus.OK);
+        Assertions.assertEquals(HttpStatus.OK,games.getStatusCode());
         Assertions.assertNotNull(games.getBody());
         Assertions.assertEquals(2, games.getBody().size());
         mockServer.verify();
-    }
-
-    @Nested
-    class SseEmitterEndPointTest{
-
-        @Disabled
-        @Test
-        void testSseEmitter() throws Exception {
-            fail("not implement yet");
-        }
     }
 
 }

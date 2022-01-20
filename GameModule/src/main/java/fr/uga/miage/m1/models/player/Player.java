@@ -6,6 +6,7 @@ import fr.uga.miage.m1.sharedstrategy.StrategyChoice;
 import fr.uga.miage.m1.sharedstrategy.StrategyExecutionData;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -13,6 +14,7 @@ import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
 
 @Getter
+@Setter
 public class Player {
     @Getter(AccessLevel.NONE)
     private static int playerCounter;

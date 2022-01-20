@@ -1,7 +1,27 @@
 {
   "id": 1,
-  "player1": null,
-  "player2": null,
+  "player1": {
+    "id": 1,
+    "strategy": null,
+    "currentChoice": "NONE",
+    "choicesHistory": [],
+    "score": 0,
+    "name": "Nicolas",
+    "canPlay": true,
+    "previousScore": 0,
+    "lastChoice": "NONE"
+  },
+  "player2": {
+    "id": 2,
+    "strategy": null,
+    "currentChoice": "NONE",
+    "choicesHistory": [],
+    "score": 0,
+    "name": "Alexis",
+    "canPlay": true,
+    "previousScore": 0,
+    "lastChoice": "NONE"
+  },
   "moveHistory": [],
   "turnCount": 0,
   "maxTurnCount": 20,
